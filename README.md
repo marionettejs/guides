@@ -7,7 +7,11 @@ It is built using [GitBook][gitbook], a tool for building books using Git and [M
 
 ### Contribute
 
-You can contribute to improve these guides on [GitHub][repo] by sending in a pull request with your changes. 
+You can contribute to improve these guides on [GitHub][repo] by sending in a pull request with your changes.
+ 
+Anyone who contributes and gets their pull requests merged in is eligible to receive a FREE sticker (the #1 phrase said by developers when someone points out a bug).
+
+![sticker](sticker.png)
 
 ----
 
