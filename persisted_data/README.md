@@ -126,7 +126,7 @@ Let's start with Backbone's `parse`.  Per the [documentation](http://backbonejs.
 
 Here, we take the server response object, and return the value of the "data" key, which is array of models.  Backbone can now `set` the models properly.
 
-But our work isn't finished.  We still need to deal with the embedded "city" attribute and the "date" attribute.  For this task, Marionette's `serializeData` is ideally suited.  `serialize` data is similar to `parse` in that the default function is essentially a no-op that you need to override (technically it's not a no-op -- it performs a shallow clone of the models' attributes via Backbone's `toJSON` but that's effectively just passing the attributes as-is on to the view / template).  It takes no arguments, and returns an object with the attributes formatted for display in your view.  This is key -- `serializeData` doesn't actually affect your model attributes themselves, it just packages them up for presentation, which is what we want.  Our `serializeData` function might look something like the following:
+But our work isn't finished.  We still need to deal with the embedded "city" attribute and the "date" attribute.  For this task, Marionette's `serializeData` is ideally suited.  `serializeData` is similar to `parse` in that the default function is essentially a no-op that you need to override (technically it's not a no-op -- it performs a shallow clone of the models' attributes via Backbone's `toJSON` but that's effectively just passing the attributes as-is on to the view / template).  It takes no arguments, and returns an object with the attributes formatted for display in your view.  This is key -- `serializeData` doesn't actually affect your model attributes themselves, it just packages them up for presentation, which is what we want.  Our `serializeData` function might look something like the following:
 
 **Our ItemView with the new `serializeData` function**
     
@@ -164,7 +164,8 @@ So in summary:
 + Use Backbone's `collection.parse` and `model.parse` to translate server responses into proper data structures for Backbone (objects for models and arrays of objects for collections).
 + Use Marionette's `ItemView.serializeData` to modify Backbone model attributes for display in your views. 
 
-One additional thing to keep in mind.  `parse` is both a model and a collection method and if you have parse defined for your collection and your model *both `parse` methods will be called anytime you return a collection of models from the server*.  Chances are you don't want both `model.parse` and `collection.parse` to be called whenever you get a collection back from the server, so you need to address this.  Fortunately, whenever a model is created as part of a collection, Backbone [passes a collection option to the model constructor](http://backbonejs.org/docs/backbone.html#section-117), which you can check for and accommodate accordingly:
+Two additional things to keep in mind.  First, `parse` is both a model and a collection method and if you have parse defined for your collection and your model *both `parse` methods will be called anytime you return a collection of models from the server*.  Chances are you don't want both `model.parse` and `collection.parse` to be called whenever you get a collection back from the server, so you need to address this.  Fortunately, whenever a model is created as part of a collection, Backbone [passes a collection option to the model constructor](http://backbonejs.org/docs/backbone.html#section-117), which you can check for and accommodate accordingly:
+		
 		// Model parse function.
 		parse : function(response, options) {
 			// If model is part of a collection, just pass the response on through.
@@ -180,4 +181,17 @@ One additional thing to keep in mind.  `parse` is both a model and a collection 
 
 Full example can be found in [this](http://stackoverflow.com/questions/18652437/backbone-not-parse-each-model-in-collection-after-fetch) stackoverflow answer.
 
-That's all for now.  Any questions feel free to post in the comments or on stackoverflow.
+Second, even though it's currently the default option in Marionette (there are plans to change it soon), you really shouldn't use `toJSON` to serialize data for your views.  This is due to the fact that `toJSON` is *also* used [to prep data for the server](http://backbonejs.org/#Model-toJSON), and chances are you don't want to override your server prep methods with your view prep methods.  Does that mean you have to write a `serializeData` function for every single view to keep things straight?  Fortunately not.  Just override Marionette's `serializeModel` and `serializeCollection` methods:     
+
+	Marionette.View.prototype.serializeModel = function(model) {
+	  model = model || this.model;
+	  return _.clone(model.attributes);
+	};
+
+	Marionette.ItemView.prototype.serializeCollection = function() {
+	  return collection.map(function(model) {
+	    return this.serializeModel(model);
+	  }, this);
+	};
+
+That's it for now.  Happy coding!
