@@ -101,7 +101,7 @@ var PersonView = Marionette.LayoutView.extend({
 
   onClickItem: function(options) {
     var counter = options.model.get('click_count');
-    options.model.set(counter + 1);
+    options.model.set('click_count', counter + 1);
   }
 });
 
