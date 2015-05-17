@@ -1,6 +1,6 @@
 # Tying your views to Backbone Models
 
-Now that we know how to build a complex, nest view hierarchy, it's time to
+Now that we know how to build a complex, nested view hierarchy, it's time to
 learn how to render dynamic data from our server.
 
 ## What are models?
