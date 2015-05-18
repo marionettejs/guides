@@ -2,34 +2,63 @@
 
 Welcome to the getting started guide for Backbone Marionette.
 
-## What is Marionette?
-
-Marionette is an extension to [Backbone.js](https://backbonejs.org) that focuses
-on the View and Controller layers of an MVC (Model, View Controller)
-application. Backbone does a very good job of enforcing a structure that ensures
-you separate your business logic (models) from your rendering logic (views) and
-user interaction (controllers).
-
-Marionette extends the VC aspects to give you simpler rendering options in the
-form of multiple types of View e.g. CollectionView, LayoutView that can figure
-out how to render a given template and set of data intuitively.
-
-Marionette also gives you more tools for managing larger-scale applications
-more easily. Applications, regions, and app routers give you far more control
-over your application's structure than is available in Backbone itself.
 
 ## What will I get from this tutorial?
 
 After reading this tutorial you will be able to write your own Marionette
-applications from scratch, from installing and managing dependencies, through to
-composing a single-page application managed by the `AppRouter`.
+applications from scratch. We will build a very simple todo list that we can add
+items to and remove items from.
 
-## What next?
+This tutorial will teach you how to render your data with views, structure your
+application layout, route your user from the address bar, and integrate with
+data stored in the server.
 
-If you're familiar with installing packages using `npm` and building apps using
-Grunt, Gulp, Brunch, or Browserify, then skip ahead to
-[building your first view](./firstview.md). If none of that made sense, then
-go to the next section on
-[installing Node and building with Browserify](./installing.md).
 
-[Next - installing Node and building your app](./installing.md)
+## Things to know
+
+Before we start the tutorial, we'll set up a basic directory structure to keep
+everything in order. We'll create a separate folder each for collections,
+models, routers, templates, and views. The folder structure is:
+
+```
+|-- index.html
+|-- app/
+     |-- driver.js
+     |-- collections/
+     |-- models/
+     |-- routers/
+     |-- templates/
+     |-- views/
+```
+
+Whenever we reference a file, we will typically refer to the filename and the
+type of file corresponding to a directory in the above structure.
+
+Our `index.html` file will be:
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <div id="app-hook"></div>
+    <script src="static/js/app.js"></script>
+  </body>
+</html>
+```
+
+If you haven't already, go through the
+[Installing Marionette](installing_marionette.md) section for instructions in
+how to setup and install a Marionette application.
+
+You can optionally use a CSS framework such as
+[Bootstrap](https://getbootstrap.com) to improve how your application looks.
+This tutorial will stick to a simpler to understand structure and HTML.
+
+
+## Experimentation
+
+Throughout this tutorial you should feel free to experiment with the code
+samples to see if you can understand what's happening. Try different options,
+templates, classes, or even write some custom logic.
