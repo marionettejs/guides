@@ -1,42 +1,65 @@
-# Applications, initializers and regions
+# Applications and regions
 
-Now that we've built a simple view, let's start constructing a slightly more
-complex application by nesting our views. This will let us show and hide
-different views based on user input, location in the application, or any other
-criteria you could come up with.
+We built a simple ToDo list with a single `LayoutView` and it worked, in a way.
+This chapter is going to focus on how to separate your application into its
+logical components and get a number of benefits:
+
+  1. The application will be easier to understand in smaller chunks
+  2. We can re-render these components separately and hugely improve perfomance
+  3. We can take advantage of different view types to make it easier to
+    structure our application with less code
+
 
 ## Creating an Application
 
-Taking our initial outline from
-[creating our first view](./firstview.md#project-outline), let's move things
-around a little. First, create a new file called `app/layout.js` with the
-following:
+From now on we'll be using the layout
+[described in the introduction][introduction], so let's move the bulk of our
+view code into `views/layout.js` and rejig it a little:
 
 ```js
+var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 
-var HelloView = Marionette.LayoutView.extend({
-  el: '#view-hook',
-  template: require('./hello.html')
+var TodoView = Marionette.LayoutView.extend({
+  el: '#app-hook',  
+  template: require('../layout.html'),
+
+  initialize: function() {
+    this.model = new Backbone.Model({
+      items: [
+        {assignee: 'Scott', text: 'Write a book about Marionette'},
+        {assignee: 'Andrew': text: 'Do some coding'}
+      ]
+    });
 });
 
-module.exports = HelloView;
+module.exports = TodoView;
 ```
 
-Your `hello.html` can remain unchanged. You'll notice that this is just the text
-from `app.js` moved into a separate file. We'll modify `app.js` to look like:
+
+We now need a way to render this view when our application loads. Marionette
+gives us the `Application` class for just this case. An `Application` sits
+between your pre-rendered page and your application. Commons tasks for an
+`Application` are:
+
+  1. Take pre-defined data from your page and feed it into your application
+  2. Render your initial views
+  3. Start the `Backbone.history` and initialize your application's `Router`
+    (more on this later)
+
+Let's put this knowledge into practice by rewriting our `driver.js` file to look
+like:
 
 ```js
-require('backbone').$ = require('jquery');
 var Marionette = require('backbone.marionette');
 
-var HelloView = require('./layout');
+var TodoView = require('./views/layout');
 
 
 var App = Marionette.Application.extend({
   onStart: function(options) {
-    var hello = new HelloView():
-    hello.render();
+    var todo = new TodoView();
+    todo.render();
   }
 });
 
@@ -44,10 +67,17 @@ var app = new App();
 app.start({});
 ```
 
-### What have we achieved?
 
 When you open your `index.html` file in your browser, you'll see exactly the
-same output as before. So what have we achieved here?
+same output as before. So why have we written more code to do this?
+
+The answer is simple: we now have an obvious point at which to inject data from
+our surrounding `index.html` page. We also have a defined start point of our
+application. Looking forward, we'd be able to use this to our advantage when it
+comes to isolating components for testing our application.
+
+
+### What did we do?
 
 We started by wrapping our application start inside our application. Notice the
 empty object literal passed to `app.start({})` - this is where we can inject
@@ -58,9 +88,54 @@ Our `onStart` method is an event handler that is called when `start()` gets
 executed. We also have access to an `onBeforeStart` method which runs before
 anything in `app.start()` is executed.
 
-Notice how we called our file `layout` instead of `view`: this reflects the
-purpose of our `LayoutView` - a central hook to render all of our application's
-templates and data.
+Let's modify this a little more so we can inject our initial data from our page.
+Reopen `driver.js` and enter the following:
+
+```js
+... // As before
+var initialData = {
+  items: [
+    {assignee: 'Scott', text: 'Write a book about Marionette'},
+    {assignee: 'Andrew': text: 'Do some coding'}
+  ]
+};
+
+var App = new Marionette.Application({
+  onStart: function(options) {
+    onStart: function(options) {
+      var todo = new TodoView(options);
+      todo.render();
+    }
+  }
+});
+
+var app = new App();
+app.start({initialData: initialData});
+```
+
+
+Then we can change our `layout.js` view to:
+
+```js
+var Backbone = require('backbone');
+var Marionette = require('backbone.marionette');
+
+var TodoView = Marionette.LayoutView.extend({
+  el: '#app-hook',  
+  template: require('../layout.html'),
+
+  initialize: function() {
+    this.model = new Backbone.Model(this.getOption('initialData'));
+});
+
+module.exports = TodoView;
+```
+
+
+The reason for doing this is pretty straightforward - if our `index.html` file
+is generated by a web server e.g. Django, Rails, PHP; we can generate a
+different list for each user and feed it into the same JavaScript application!
+
 
 ## Laying out our views
 

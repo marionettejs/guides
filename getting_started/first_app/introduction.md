@@ -56,6 +56,10 @@ You can optionally use a CSS framework such as
 [Bootstrap](https://getbootstrap.com) to improve how your application looks.
 This tutorial will stick to a simpler to understand structure and HTML.
 
+This tutorial will regularly ask you to restructure code from previous
+chapters. We will detail every change, so if you can't see a file, assume that
+it remains unchanged.
+
 
 ## Experimentation
 
