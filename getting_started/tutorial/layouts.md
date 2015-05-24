@@ -285,3 +285,14 @@ view event handlers recognize when they need to do something.
 Finally, this layout solves the issue identified before. Now only the form
 itself will be re-rendered when data changes. The list is able to manage the
 individual items being attached and render only what needs to be rendered.
+
+For completeness, the `layout.html` template is detailed below:
+
+```
+<div class="list"></div>
+<div class="form"></div>
+```
+
+
+As a template, the layout has been relegated to just an overarching frame that
+delegates most of its rendering responsibilities to its subordinate views.
