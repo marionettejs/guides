@@ -7,6 +7,7 @@
    * [Installing Marionette Inspector](getting_started/installing_inspector.md)
    * [Tutorial](getting_started/tutorial/introduction.md)
     * [Your first view](getting_started/tutorial/firstview.md)
+    * [Creating data models](getting_started/tutorial/models.md)
     * [Laying out your screen](getting_started/tutorial/layouts.md)
 * [Creating an Application](application/README.md)
 * [Implementing Routing](approuter/README.md)

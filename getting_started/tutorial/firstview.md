@@ -99,17 +99,71 @@ Next we'll modify our `templates/layout.html` file to take advantage of this:
 ```
 
 We're using the built-in [Underscore template engine][underscore] to render our
-item list. You should have a list of two items detailing simple todo items.
+item list. You should have a list of two items detailing simple todo items. We
+now have a list of items being rendered on the page but it all feels a little
+clunky. What happens if we want to add or remove items in this list?
 
-It's perfectly possible to build complex applications with just a single view,
-however you'll quickly run into limitations, the most pressing being how to only
-redraw certain areas of your screen more easily.
 
-With a single view, you'd become dependent on jQuery again, which we really
-want to avoid if we're going to make our application easy to understand.
+## Collections and CollectionViews
 
-Our next section will deal with exactly that.
+Our list of items is really a collection, so we'll use the `Backbone.Collection`
+to model it. We'll also use a view that specializes in rendering lists of data -
+the `CollectionView`. Back in our `driver.js` file, we're going to use a couple
+of views:
 
+```js
+var Backbone = require('backbone');
+var Marionette = require('backbone.marionette');
+
+
+var ToDo = Marionette.LayoutView.extend({
+  tagName: 'li',
+  template: './templates/todoitem.html'
+});
+
+
+var TodoList = Marionette.CollectionView.extend({  
+  el: '#app-hook',
+  tagName: 'ul',
+
+  childView: ToDo,
+
+  initialize: function() {
+    this.collection = new Backbone.Collection([
+      {assignee: 'Scott', text: 'Write a book about Marionette'},
+      {assignee: 'Andrew': text: 'Do some coding'}
+    ]);
+  }
+});
+
+var todo = new TodoList();
+todo.render();  
+```
+
+
+The first thing we've done is add another view and attached it to our
+`CollectionView` using the `childView` attribute. We also changed out
+`this.model` for `this.collection` in the `initialize` method of our newly
+minted `CollectionView` and removed the wrapping `items` key.
+
+The `CollectionView` is a view that goes through `this.collection` and renders
+an instance of its `childView` attribute for each item that it finds. We've
+removed the `template` attribute as `CollectionView` has no template of its own.
+
+In `templates/todoitem.html` we simply have:
+
+```
+<%- item.text %> &mdash; <%- item.assignee %>
+```
+
+
+That's it! Marionette knows how to build up the surrounding `ul` and `li` tags
+and inserts the iteration for us. Even better, if we wanted to add/remove items
+in the collection, `CollectionView` sees that and automatically re-renders
+itself for us.
+
+In the next chapter, we're going to add new items to this collection so we can
+keep track of our job list.
 
 [installing]:[../installing_marionette.md]
 [models]:[./models.md]
