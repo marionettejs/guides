@@ -137,7 +137,7 @@ var TodoList = Marionette.CollectionView.extend({
 });
 
 var todo = new TodoList();
-todo.render();  
+todo.render();
 ```
 
 

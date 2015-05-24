@@ -1,217 +1,138 @@
-# Tying your views to Backbone Models
+# Storing user-entered data
 
-Now that we know how to build a complex, nested view hierarchy, it's time to
-learn how to render dynamic data from our server.
-
-## What are models?
-
-[Backbone models](https://backbonejs.org/#Model) are an extremely powerful tool
-that link your application to your server. The model is able to synchronize data
-to and from your server, perform logic, and be rendered in fields. As Marionette
-focuses on the view/routing layers, we'll start by using models to render data.
-
-## Creating a Model
-
-There are two ways to do this:
-  1. If we don't want any special behavior, just create an instance of a model
-  2. If we want to include some business logic, extend the model
-
-We'll start by just using the Backbone Model itself in our view. First we'll
-need some data, so open up `app.js`:
-
-```js
-require('backbone').$ = require('jquery');
-var Marionette = require('backbone.marionette');
-
-var HelloView = require('./layout');
-
-var appData = {
-  first_name: 'John',
-  last_name: 'Smith'
-};
+We've just built a simple list of jobs that we need to complete but, as always,
+we want to add more jobs to our list as they come in. In this chapter, we'll
+build that functionality using some more of Marionette's functionality.
 
 
-var App = Marionette.Application.extend({
-  onStart: function(options) {
-    var regions = new Marionette.RegionManager({
-      regions: {
-        hello: '#view-hook'
-      }
-    });
+## Building our form
 
-    var modelData = new Backbone.Model(options.data);
-
-    var hello = new HelloView({model: modelData});
-
-    regions.get('hello').show(hello);
-  }
-});
-
-var app = new App();
-app.start({data: appData});
-```
-
-Now, without changing our `HelloView`, let's update our `hello.html` template
-to take advantage of these new fields:
-
-```html
-<p>Hello, <%- first_name %> <%- last_name %>!</p>
-<div id="goodbye-hook"></div>
-```
-
-Now when we build and load our app, you'll see the name set from the data. The
-default template language we have set is
-[underscore](https://underscorejs.org#template). Though Marionette supports most
-template languages, we'll stick with underscore for this tutorial, as it is one
-of Backbone's dependencies anyway.
-
-Feel free to play around with different values and template variables. You'll
-see that the names correspond exactly to the fields set on the model.
-
-### What if we have no data?
-
-You'll notice that if you reference a field that's not set then you won't be
-able to compile the template or the app.
-
-We can mitigate this a couple of ways:
-  1. Model defaults
-  2. Template helpers
-
-#### Model defaults
-
-Let's first do it at the model level by setting some defaults. Create a file at
-`app/models/person.js`:
+First things first, we need a form to enter data. To make this work in our
+current application, we can swap out `CollectionView` for `CompositeView` in our
+`driver.js` file like so:
 
 ```js
 var Backbone = require('backbone');
+var Marionette = require('backbone.marionette');
 
-var Person = Backbone.Model.extend({
-  defaults: {
-    first_name: '',
-    last_name: '',
-    nickname: 'Nobody'
+
+var ToDo = Marionette.LayoutView.extend({
+  tagName: 'li',
+  template: './templates/todoitem.html'
+});
+
+
+var TodoList = Marionette.CompositeView.extend({  
+  el: '#app-hook',
+  template: require('./templates/todolist.html'),
+
+  childView: ToDo,
+  childViewContainer: 'ul',
+
+  initialize: function() {
+    this.collection = new Backbone.Collection([
+      {assignee: 'Scott', text: 'Write a book about Marionette'},
+      {assignee: 'Andrew': text: 'Do some coding'}
+    ]);
   }
 });
 
-module.exports = Person;
+var todo = new TodoList();
+todo.render();
 ```
 
-Now let's go back to our `app.js` file and use the new `Person` model:
+
+A `CompositeView` is a `CollectionView` with its own template. We then define
+where the `childView` items are to be attached to the template using
+`childViewContainer` and pass in the template. In `templates/todolist.html` we
+have:
+
+```
+<ul></ul>
+<form>
+  <input type="text" name="text" id="id_text" />
+  <input type="text" name="assignee" id="id_assignee" />
+
+  <button id="btn-add">Add Item</button>
+</form>
+```
+
+
+We don't need to change the individual item template at all. Now when we refresh
+the page, we'll have a form where we can enter data, click "Add Item" and...
+nothing happens. Marionette doesn't know what elements to watch and what not to
+watch, so we have to tell it.
+
+
+## Binding to user input
+
+We need to tell Marionette that it needs to listen to user input on the form and
+how it should respond to that. We'll reopen `driver.js` and start building this
+in:
 
 ```js
-var Person = require('./models/person');
-
-var HelloView = require('./layout');
-
-var appData = {
-  first_name: 'John',
-  last_name: 'Smith'
-};
+var Backbone = require('backbone');
+var Marionette = require('backbone.marionette');
 
 
-var App = Marionette.Application.extend({
-  onStart: function(options) {
-    var regions = new Marionette.RegionManager({
-      regions: {
-        hello: '#view-hook'
-      }
+var ToDo = Marionette.LayoutView.extend({
+  tagName: 'li',
+  template: './templates/todoitem.html'
+});
+
+
+var TodoList = Marionette.CompositeView.extend({  
+  el: '#app-hook',
+  template: require('./templates/todolist.html'),
+
+  childView: ToDo,
+  childViewContainer: 'ul',
+
+  ui: {  // 1
+    assignee: '#id_assignee',
+    form: 'form',
+    text: '#id_text'
+  },
+
+  triggers: {  // 2
+    'submit @ui.form': 'add:todo:item'
+  },
+
+  initialize: function() {
+    this.collection = new Backbone.Collection([
+      {assignee: 'Scott', text: 'Write a book about Marionette'},
+      {assignee: 'Andrew': text: 'Do some coding'}
+    ]);
+  },
+
+  onAddTodoItem: function() {  // 3
+    this.collection.add({
+      assignee: this.ui.assignee.val(),  // 4
+      text: this.ui.text.val()
     });
-
-    var modelData = new Person(options.appData);
-
-    var hello = new HelloView({model: modelData});
-
-    regions.get('hello').show(hello);
+    this.ui.assignee.val('');
+    this.ui.text.val('');
   }
 });
+
+var todo = new TodoList();
+todo.render();
 ```
 
-Just to prove it works, we'll modify our template to refer to people by their
-nickname:
 
-```html
-<p>Hello, <%- nickname %>!</p>
-<div id="goodbye-hook"></div>
-```
+We've added quite a bit of code here, so lets take a few minutes to break it
+down:
 
-Now you can see the default value set from our Model. Where default fields match
-data attributes, obviously the data set takes priority.
+  1. We've added a "ui hash" to our view. We can attach these to any view to
+    create cached jQuery selectors to elements in our view's template.
+  2. In the triggers hash, we can reference those ui keys and, when a jQuery
+    event occurs, we can listen for it and fire a trigger.
+  3. This trigger is then converted to an `onEventName` method and called. This
+    method need not exist and is very powerful. We'll cover it in more depth
+    later in the book.
+  4. We can also reference the ui hash inside our view and treat it just like a
+    jQuery selector object.
 
-#### Using template helpers
 
-Alternatively, we could use a template helper to check for the existence of an
-attribute and return a default value if it doesn't exist. Let's open our
-`layout.js` file and modify the `HelloView`:
-
-```js
-var HelloView = Marionette.LayoutView.extend({
-  template: require('./hello.html'),
-
-  regions: {
-    goodbye: '#goodbye-hook'
-  },
-
-  onShow: function() {
-    var goodbyeView = new GoodbyeView();
-    this.goodbye.show(goodbyeView);
-  },
-
-  templateHelpers: function() {
-    var model = this.model;
-
-    return {
-      get: function(name, default) {
-        return model.get(name) || default || '';
-      }
-    };
-  }
-});
-```
-
-Now let's modify our `hello.html` template to call the helper:
-
-```html
-<p>Hello, <%- get(nickname, 'Nobody') %>!</p>
-<div id="goodbye-hook"></div>
-```
-
-This gives us the same output as using a model default.
-
-#### Which do I use?
-
-In truth, template helpers and model defaults are best suited for different
-purposes. Model defaults are best used when server synchronization, sharing
-data, and performing business logic that depends on those fields being defined.
-For example, you could set a quantity field that defaults to 1.
-
-Template helpers are best used when you want to handle rendering to a specific
-view. If you find yourself writing lots of helpers like the `get` example above,
-it might be better to set it as a default. A good example of a template helper
-could be setting a span class based on model data:
-
-```js
-templateHelpers: {
-  isPositive: function(value) {
-    if (value > 0) {
-      return 'color-green';
-    }
-    else if (value < 0) {
-      return 'color-red';
-    }
-    return 'color-yellow';
-  }
-}
-```
-
-You can also attach pre-existing functions to template helpers - it's just a
-JavaScript object.
-
-## What next?
-
-Now that you have a basic understanding of how to render data from model fields,
-with a couple of strategies for handling different use cases. You should be able
-to use different template helpers to render text based on your model data.
-
-When you're comfortable, we can either;
-  1. Move on to more [complex views with collections](./collections.md)
-  2. Start [handling user input and updating your model](./events.md)
+Now, whenever we click on the "Add Item" button, a new job will be added to our
+todo list and the form will be cleared.
