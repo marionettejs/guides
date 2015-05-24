@@ -241,8 +241,108 @@ var TodoList = Marionette.CompositeView.extend({
     add: 'itemAdded'
   },
 
+  initialize: function() {
+    this.collection = new Backbone.Collection([
+      {assignee: 'Scott', text: 'Write a book about Marionette'},
+      {assignee: 'Andrew': text: 'Do some coding'}
+    ]);
+    this.model = new ToDoModel();
+  },
+
+  onAddTodoItem: function() {
+    this.model.set({
+      assignee: this.ui.assignee.val(),
+      text: this.ui.text.val()
+    }, {validate: true});
+
+    var items = this.model.pick('assignee', 'text');
+    this.collection.add(items);
+  },
+
+  itemAdded: function() {
+    this.model.set({
+      assignee: '',
+      text: ''
+    });
+
+    this.ui.assignee.val('');
+    this.ui.text.val('');
+  }
+});
+
+var todo = new TodoList();
+todo.render();
+```
+
+
+With these changes, we can now refuse to add an item unless it passes
+validation. We could also display error messages if validation fails by binding
+the `invalid` event in `modelEvents`. You can see how we've set our fields to
+blank fields on the model and also in the ui hash. If we start having more and
+more fields, you can see how this would quickly become unmanageable. Surely we
+can just clear the form when the model is cleared?
+
+
+## Rendering from models
+
+Back in our first chapter, we were able to render data based on the model
+fields. We'll use this to handle our form as well. Firstly we'll open up our
+`todolist.html` template:
+
+```
+<ul></ul>
+<form>
+  <label for="id_text">Todo Text</label>
+  <input type="text" name="text" id="id_text" value="<%- text %>" />
+  <label for="id_assignee">Assign to</label>
+  <input type="text" name="assignee" id="id_assignee" value="<%- assignee %>"/>
+
+  <button id="btn-add">Add Item</button>
+</form>
+```
+
+
+By adding in the model field values to our form, we'll be able to render the
+data directly from our model fields. It also means that, when the model fields
+are blank, these will contain no data. We just need to wire up our view to
+handle this:
+
+```js
+var Backbone = require('backbone');
+var Marionette = require('backbone.marionette');
+
+var ToDoModel = require('./models/todo');
+
+
+var ToDo = Marionette.LayoutView.extend({
+  tagName: 'li',
+  template: './templates/todoitem.html'
+});
+
+
+var TodoList = Marionette.CompositeView.extend({  
+  el: '#app-hook',
+  template: require('./templates/todolist.html'),
+
+  childView: ToDo,
+  childViewContainer: 'ul',
+
+  ui: {
+    assignee: '#id_assignee',
+    form: 'form',
+    text: '#id_text'
+  },
+
+  triggers: {
+    'submit @ui.form': 'add:todo:item'
+  },
+
+  collectionEvents: {
+    add: 'itemAdded'
+  },
+
   modelEvents: {
-    change: 'addToCollection'
+    change: 'render'
   },
 
   initialize: function() {
@@ -258,17 +358,16 @@ var TodoList = Marionette.CompositeView.extend({
       assignee: this.ui.assignee.val(),
       text: this.ui.text.val()
     }, {validate: true});
-  },
 
-  addToCollection: function() {
     var items = this.model.pick('assignee', 'text');
     this.collection.add(items);
   },
 
   itemAdded: function() {
-    this.model.clear();
-    this.ui.assignee.val('');
-    this.ui.text.val('');
+    this.model.set({
+      assignee: '',
+      text: ''
+    });
   }
 });
 
@@ -277,9 +376,12 @@ todo.render();
 ```
 
 
-With these changes, we can now refuse to add an item unless it passes
-validation. We could also display error messages if validation fails by binding
-the `invalid` event in `modelEvents`.
+With these simple changes, the form will now re-render itself as an empty form
+whenever the user clicks the "Add Item" button. However, there's one final thing
+to note - the `render` method redraws the entire list as well. You can probably
+imagine this will start to get really slow as the list grows in size. Ideally,
+we just want to re-render the form itself and handle the list separately. We'll
+go into this in our next chapter.
 
 
 [eventlist]:[http://backbonejs.org/#Events-catalog]
