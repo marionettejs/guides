@@ -1,16 +1,24 @@
 # Applications and regions
 
-We built a simple ToDo list with a single `LayoutView` and it worked, in a way.
-This chapter is going to focus on how to separate your application into its
-logical components and get a number of benefits:
+In the previous chapter we built our ToDo list application with the ability to
+add new jobs to our list. So far, everything has been built into a single
+view. This led to an issue causing everything to get re-rendered whenever we
+added an item to our list.
 
-  1. The application will be easier to understand in smaller chunks
-  2. We can re-render these components separately and hugely improve perfomance
-  3. We can take advantage of different view types to make it easier to
-    structure our application with less code
+The `CompositeView` itself knows how to only add a single item to its list, but
+our `change` hook was causing everything to be re-rendered anyway. In this
+chapter we're going to dig into the `LayoutView` a little more and how we can
+use it to display multiple views side-by-side and manage them independently.
 
 
-## Creating an Application
+## Applications
+
+Before we do that though, we'll take a slight diversion into the `Application`
+in Marionette. The Application is an object that lets us manage our ToDo list
+and its interaction with the surrounding page.
+
+
+### Creating an Application
 
 From now on we'll be using the layout
 [described in the introduction][introduction], so let's move the bulk of our
@@ -20,18 +28,63 @@ view code into `views/layout.js` and rejig it a little:
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 
-var TodoView = Marionette.LayoutView.extend({
-  el: '#app-hook',  
-  template: require('../layout.html'),
+var ToDoModel = require('./models/todo');
+
+
+var ToDo = Marionette.LayoutView.extend({
+  tagName: 'li',
+  template: './templates/todoitem.html'
+});
+
+
+var TodoList = Marionette.CompositeView.extend({  
+  el: '#app-hook',
+  template: require('./templates/todolist.html'),
+
+  childView: ToDo,
+  childViewContainer: 'ul',
+
+  ui: {
+    assignee: '#id_assignee',
+    form: 'form',
+    text: '#id_text'
+  },
+
+  triggers: {
+    'submit @ui.form': 'add:todo:item'
+  },
+
+  collectionEvents: {
+    add: 'itemAdded'
+  },
+
+  modelEvents: {
+    change: 'render'
+  },
 
   initialize: function() {
-    this.model = new Backbone.Model({
-      items: [
-        {assignee: 'Scott', text: 'Write a book about Marionette'},
-        {assignee: 'Andrew': text: 'Do some coding'}
-      ]
+    this.collection = new Backbone.Collection(this.getOption('initialData'));
+    this.model = new ToDoModel();
+  },
+
+  onAddTodoItem: function() {
+    this.model.set({
+      assignee: this.ui.assignee.val(),
+      text: this.ui.text.val()
+    }, {validate: true});
+
+    var items = this.model.pick('assignee', 'text');
+    this.collection.add(items);
+  },
+
+  itemAdded: function() {
+    this.model.set({
+      assignee: '',
+      text: ''
     });
+  }
 });
+
 
 module.exports = TodoView;
 ```
@@ -52,50 +105,8 @@ like:
 
 ```js
 var Marionette = require('backbone.marionette');
-
 var TodoView = require('./views/layout');
 
-
-var App = Marionette.Application.extend({
-  onStart: function(options) {
-    var todo = new TodoView();
-    todo.render();
-  }
-});
-
-var app = new App();
-app.start({});
-```
-
-
-When you open your `index.html` file in your browser, you'll see exactly the
-same output as before. Why did we write more code to do this?
-
-The answer is simple: we now have an obvious point at which to inject data from
-our surrounding `index.html` page. We also have a defined start point of our
-application. Looking forward, we'd be able to use this to our advantage when it
-comes to isolating components for testing our application.
-
-
-### Breaking it down
-
-We started by wrapping our application start inside our application. Notice the
-empty object literal passed to `app.start({})` - this is where we can inject
-options into our application from the template. A couple of examples would be
-initial data or URLs to download the initial data to render.
-
-Our `onStart` method is an event handler that is called when `start()` gets
-executed. We also have access to an `onBeforeStart` method which runs before
-anything in `app.start()` is executed. We'll go into [event handlers][events]
-in a later chapter. For now, it's enough to understand that events occur and
-they can be tied to executable code.
-
-Let's modify this a little more so we can inject our initial data from our page,
-much like a real-world webpage would do. Reopen `driver.js` and set up our
-initial data as such.
-
-```js
-... // As before
 var initialData = {
   items: [
     {assignee: 'Scott', text: 'Write a book about Marionette'},
@@ -107,6 +118,7 @@ var App = new Marionette.Application({
   onStart: function(options) {
     var todo = new TodoView(options);
     todo.render();
+    todo.triggerMethod('show');
   }
 });
 
@@ -115,226 +127,161 @@ app.start({initialData: initialData});
 ```
 
 
-Notice that `app.start` now takes an `options` object that gets passed into our
-`onStart` handler. Putting the initial data here will allow us to change our
-`layout.js` view to:
+With an Application object, we now have an obvious starting point for our
+application. We've passed our initial data in from the `driver.js` file instead
+of the individual view file itself. Now, if our `index.html` file gets generated
+by a web server e.g. Django, Rails, PHP; we can generate a different list for
+each user, attach it to an object inside `index.html` and reference it from our
+JavaScript application.
+
+
+## Layouts
+
+With that little diversion out the way, we can now start breaking up our
+application's layout so we have different views for different purposes. The
+first thing we need to do is add an extra layout. First, we're going to break up
+our existing `views/layout.js` into `views/list.js` and `views/form.js` which
+look like:
+
+```js
+// views/list.js
+var Marionette = require('backbone.marionette');
+
+var ToDo = Marionette.LayoutView.extend({
+  tagName: 'li',
+  template: '../templates/todoitem.html'
+});
+
+
+var TodoList = Marionette.CollectionView.extend({
+  tagName: 'ul',
+  childView: ToDo
+});
+
+
+module.exports = TodoList;
+```
+
+
+```js
+// views/form.js
+var Marionette = require('backbone.marionette');
+
+
+var FormView = Marionette.LayoutView.extend({
+  tagName: 'form',
+  template: require('../templates/form.html'),
+
+  triggers: {
+    submit: 'add:todo:item'
+  },
+
+  modelEvents: {
+    change: 'render'
+  },
+
+  ui: {
+    assignee: '#id_assignee',
+    text: '#id_text'
+  }
+});
+
+
+module.exports = FormView;
+```
+
+
+You can see straight away how much simpler these views are. They only deal with
+their own data management and are completely unaware of each other. We've also
+turned the list back into a `CollectionView` because we no longer need to attach
+a model or a form template. We can safely remove the `todolist.html` template.
+The `todoitem.html` template is unchanged but we have a new `form.html`
+template:
+
+```
+<label for="id_text">Todo Text</label>
+<input type="text" name="text" id="id_text" value="<%- text %>" />
+<label for="id_assignee">Assign to</label>
+<input type="text" name="assignee" id="id_assignee" value="<%- assignee %>"/>
+
+<button id="btn-add">Add Item</button>
+```
+
+
+We no longer need the wrapping form because the `LayoutView` will generate that
+for us.
+
+
+Our `views/layout.js` file now handles the management of the two separate views:
 
 ```js
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
+var ToDoModel = require('../models/todo');
 
-var TodoView = Marionette.LayoutView.extend({
-  el: '#app-hook',  
-  template: require('../layout.html'),
-
-  initialize: function() {
-    this.model = new Backbone.Model(this.getOption('initialData'));
-});
-
-module.exports = TodoView;
-```
+var FormView = require('./form');
+var ListView = require('./list');
 
 
-Now, if our `index.html` file gets generated by a web server e.g. Django, Rails,
-PHP; we can generate a different list for each user and feed it into the same
-JavaScript application.
+var Layout = Marionette.LayoutView.extend({
+  el: '#app-hook',
 
-
-## More than one point of view
-
-What happens if we want to use more than one view?
-The key component of a `LayoutView` is that it lets us attach and render
-different views and different types of views. Let's create a new view and render
-it from our `LayoutView`. Create a file called `goodbye.js`:
-
-```js
-var Marionette = require('backbone.marionette');
-
-
-var GoodbyeView = Marionette.LayoutView.extend({
-  template: require('./goodbye.html')
-});
-
-
-module.exports = GoodbyeView;
-```
-
-You'll notice that we don't set `el` here - this will be created for us by the
-`LayoutView` when we render it. Our next step is to create a template file
-called `goodbye.html`:
-
-```html
-<p class="goodbye-message">Goodbye, world! I'll miss you!</p>
-```
-
-Let's go back to our `hello.html` template and tell it where we're going to want
-to render the `goodbye.html` template:
-
-```html
-<p>Hello, world!</p>
-<div id="goodbye-hook"></div>
-```
-
-Finally, we need to tell our `LayoutView` to actually render the `GoodbyeView`
-when it is rendered itself. Open up `layout.js` and change `HelloView` to look
-like:
-
-```js
-var GoodbyeView = require('./goodbye');
-
-
-var HelloView = Marionette.LayoutView.extend({
-  el: '#view-hook',
-  template: require('./hello.html'),
+  template: require('../templates/layout.html'),
 
   regions: {
-    goodbye: '#goodbye-hook'
+    form: '.form',
+    list: '.list'
   },
 
-  onRender: function() {
-    var goodbyeView = new GoodbyeView();
-    this.goodbye.show(goodbyeView);
-  }
-});
-```
+  collectionEvents: {
+    add: 'itemAdded'
+  },
 
-This might seem like a lot of code to just render an extra `<p>` - but we can
-use this to render lots of different types of views in a hierarchy. For example,
-we can embed lists built from collections of data, or bind different types of
-views to different data models. We'll discover more about
-[tying Backbone models to views](./models.md) shortly.
-
-### Customizing views
-
-When we create views inside regions, Marionette will create a new `<div>` tag
-to place the template inside. If we want to customize it, we can do this by
-setting attributes on the view itself. Let's take the `<p>` tags out of the
-template and have the `GoodbyeView` render them. Our `goodbye.html` template is
-now:
-
-```html
-Goodbye world, I'll miss you!
-```
-
-and our GoodbyeView is modified to look like:
-
-```js
-var GoodbyeView = Marionette.LayoutView.extend({
-  tagName: 'p',
-  className: 'goodbye-message',
-  template: require('./goodbye.html')
-});
-```
-
-Now when you build the app and inspect the HTML, you'll see one less `<div>` in
-the rendered output and the `<p>` tag will have the class we set.
-
-## Nesting Layouts
-
-As you can see, we used another `LayoutView` for our `GoodbyeView`. Does that
-mean we can set a `regions` hash on that? Yes, we can! Let's do it. This time,
-we'll just modify the view inside the same `goodbye.js` file:
-
-```js
-var MiddleView = Marionette.LayoutView.extend({
-  template: require('./hello.html')
-});
-
-
-var GoodbyeView = Marionette.LayoutView.extend({
-  template: require('./goodbye.html'),
-
-  regions: {
-    middle: '.middle-hook'
+  initialize: function() {
+    this.collection = new Backbone.Collection([
+      {assignee: 'Scott', text: 'Write a book about Marionette'},
+      {assignee: 'Andrew': text: 'Do some coding'}
+    ]);
+    this.model = new ToDoModel();
   },
 
   onShow: function() {
-    var middleView = new MiddleView():
-    this.middle.show(middleView);
+    var formView = new FormView({model: this.model});
+    var listView = new ListView({collection: this.collection});
+
+    this.showChildView('form', formView);
+    this.showChildView('list', listView);
+  },
+
+  onChildviewAddTodoItem: function() {
+    this.model.set({
+      assignee: this.ui.assignee.val(),
+      text: this.ui.text.val()
+    }, {validate: true});
+
+    var items = this.model.pick('assignee', 'text');
+    this.collection.add(items);
+  },
+
+  itemAdded: function() {
+    this.model.set({
+      assignee: '',
+      text: ''
+    });
   }
 })
 ```
 
-To keep it simple, I've just re-referenced the initial `hello.html` template.
 
-We've removed the `tagName` as we're going back to building a more complex view,
-so our `goodbye.html` could look like:
+The major changes here are that some of the form rendering logic is pushed into
+the form view itself, while logic that links the form to the list is kept in
+this `LayoutView`. We also have an `onShow` handler that renders the views into
+the `jQuery` selectors referenced by the `regions` hash. Finally, a `LayoutView`
+can see events occurring on its children by prepending its event handler with
+`Childview` as in `onChildviewAddTodoItem`. The individual views don't directly
+interact with each other, instead interacting with the model and letting the
+view event handlers recognize when they need to do something.
 
-```html
-<div class="middle-hook"></div>
-<p class="goodbye-message">Goodbye world, I'll miss you!</p>
-```
-
-Now when we build and refresh the page, we'll see the contents of the
-`MiddleView` rendered above the `GoodbyeView`.
-
-## Regions everywhere
-
-You'll notice that sometimes we call `render()`, sometimes we call `show()` and
-we set different event handlers. This is a little inconsistent, can't we just
-use the region manager pattern everywhere? Actually, we can! Marionette lets us
-create our own `RegionManager` classes for handling just this case.
-
-Let's go back to our top-level application and use a region manager to handle
-the initial rendering in `app.js`:
-
-```js
-var App = Marionette.Application.extend({
-  onStart: function(options) {
-    var regions = new Marionette.RegionManager({
-      regions: {
-        hello: '#view-hook'
-      }
-    });
-
-    var hello = new HelloView();
-
-    regions.get('hello').show(hello);
-  }
-});
-```
-
-We also need to modify `HelloView` so it no longer handles its own `el`:
-
-```js
-var HelloView = Marionette.LayoutView.extend({
-  template: require('./hello.html'),
-
-  regions: {
-    goodbye: '#goodbye-hook'
-  },
-
-  onShow: function() {
-    var goodbyeView = new GoodbyeView();
-    this.goodbye.show(goodbyeView);
-  }
-});
-```
-
-This gives us two benefits:
-  1. We consistently use `onShow` and only use `onRender` where we absolutely
-    must.
-  2. We can re-use `HelloView` in other views and attach it to different
-    elements - we no longer rely on `#view-hook` being in the DOM.
-
-### What's the difference between `onShow` and `onRender`?
-
-`onShow` is only called when the view is attached to the region manager with
-`show(view)`, whereas `onRender` is called every time the DOM has to be
-re-rendered. This means `onRender` can get called a lot when you have an
-attached model or collection that changes frequently. This will make your
-application faster as it gets larger and more complex.
-
-
-## What's next?
-
-That should cover the basics for managing your views. You should understand the
-principles of managing regions and why it's a great thing to do. You should
-familiarize yourself with the concepts, try adding extra regions and keep
-nesting your layouts until you're comfortable with creating layouts and nesting
-them.
-
-When you're ready, let's move onto
-[tying Backbone models to views](./models.md).
-
-[events]:[./events.md]
+Finally, this layout solves the issue identified before. Now only the form
+itself will be re-rendered when data changes. The list is able to manage the
+individual items being attached and render only what needs to be rendered.
