@@ -50,7 +50,9 @@ have:
 ```
 <ul></ul>
 <form>
+  <label for="id_text">Todo Text</label>
   <input type="text" name="text" id="id_text" />
+  <label for="id_assignee">Assign to</label>
   <input type="text" name="assignee" id="id_assignee" />
 
   <button id="btn-add">Add Item</button>
@@ -98,6 +100,10 @@ var TodoList = Marionette.CompositeView.extend({
     'submit @ui.form': 'add:todo:item'
   },
 
+  collectionEvents: {  // 3
+    add: 'itemAdded'
+  },
+
   initialize: function() {
     this.collection = new Backbone.Collection([
       {assignee: 'Scott', text: 'Write a book about Marionette'},
@@ -105,11 +111,14 @@ var TodoList = Marionette.CompositeView.extend({
     ]);
   },
 
-  onAddTodoItem: function() {  // 3
+  onAddTodoItem: function() {  // 4
     this.collection.add({
-      assignee: this.ui.assignee.val(),  // 4
+      assignee: this.ui.assignee.val(),  // 5
       text: this.ui.text.val()
     });
+  },
+
+  itemAdded: function() {  // 6
     this.ui.assignee.val('');
     this.ui.text.val('');
   }
@@ -127,12 +136,150 @@ down:
     create cached jQuery selectors to elements in our view's template.
   2. In the triggers hash, we can reference those ui keys and, when a jQuery
     event occurs, we can listen for it and fire a trigger.
-  3. This trigger is then converted to an `onEventName` method and called. This
+  3. The collectionEvents hash allows us to listen to changes occurring on the
+    attached `this.collection` attribute. The value must exist as a method on
+    this view.
+  4. This trigger is then converted to an `onEventName` method and called. This
     method need not exist and is very powerful. We'll cover it in more depth
     later in the book.
-  4. We can also reference the ui hash inside our view and treat it just like a
+  5. We can also reference the ui hash inside our view and treat it just like a
     jQuery selector object.
+  6. The method referenced in `collectionEvents` is called when the event is
+    triggered.
 
 
 Now, whenever we click on the "Add Item" button, a new job will be added to our
-todo list and the form will be cleared.
+todo list and the form will be cleared. We've taken an opportunity to introduce
+model and collection driven events as well. For a full list of events, see the
+[Backbone documentation][eventlist].
+
+
+## Validating input
+
+A job shouldn't be added to the list unless it has some text and has been
+assigned to someone. You'll notice that we don't really enforce that here but we
+really should. There are a couple of ways we could go about this: we could use
+the ui hash and validate the jQuery content, or we could use Backbone's Model
+validation to do it for us.
+
+Apart from looking nicer, the advantage of doing data validation in the Model is
+that we can share that model class between views and not have to rewrite all our
+validation logic every time.
+
+We'll create a new file called `models/todo.js` which contains:
+
+```js
+var Backbone = require('backbone');
+
+
+var ToDo = Backbone.Model.extend({
+  defaults: {
+    assignee: '',
+    text: ''
+  },
+
+  validate: function(attrs) {
+    var errors = {};
+    var hasError = false;
+    if (!attrs.assignee) {
+      errors.assignee = 'assignee must be set';
+      hasError = true;
+    }
+    if (!attrs.text) {
+      errors.text = 'text must be set';
+      hasError = true;
+    }
+
+    if (hasError) {
+      return errors;
+    }
+  }
+});
+
+
+module.exports = ToDo;
+```
+
+
+If we have no errors, our `validate` method must return nothing (`undefined`).
+When we do have errors, we can return an object describing the errors. The
+Marionette view will then see this validation error and let us handle it.
+
+Back in our `driver.js` file we can do:
+
+```js
+var Backbone = require('backbone');
+var Marionette = require('backbone.marionette');
+
+var ToDoModel = require('./models/todo');
+
+
+var ToDo = Marionette.LayoutView.extend({
+  tagName: 'li',
+  template: './templates/todoitem.html'
+});
+
+
+var TodoList = Marionette.CompositeView.extend({  
+  el: '#app-hook',
+  template: require('./templates/todolist.html'),
+
+  childView: ToDo,
+  childViewContainer: 'ul',
+
+  ui: {
+    assignee: '#id_assignee',
+    form: 'form',
+    text: '#id_text'
+  },
+
+  triggers: {
+    'submit @ui.form': 'add:todo:item'
+  },
+
+  collectionEvents: {
+    add: 'itemAdded'
+  },
+
+  modelEvents: {
+    change: 'addToCollection'
+  },
+
+  initialize: function() {
+    this.collection = new Backbone.Collection([
+      {assignee: 'Scott', text: 'Write a book about Marionette'},
+      {assignee: 'Andrew': text: 'Do some coding'}
+    ]);
+    this.model = new ToDoModel();
+  },
+
+  onAddTodoItem: function() {
+    this.model.set({
+      assignee: this.ui.assignee.val(),
+      text: this.ui.text.val()
+    }, {validate: true});
+  },
+
+  addToCollection: function() {
+    var items = this.model.pick('assignee', 'text');
+    this.collection.add(items);
+  },
+
+  itemAdded: function() {
+    this.model.clear();
+    this.ui.assignee.val('');
+    this.ui.text.val('');
+  }
+});
+
+var todo = new TodoList();
+todo.render();
+```
+
+
+With these changes, we can now refuse to add an item unless it passes
+validation. We could also display error messages if validation fails by binding
+the `invalid` event in `modelEvents`.
+
+
+[eventlist]:[http://backbonejs.org/#Events-catalog]
