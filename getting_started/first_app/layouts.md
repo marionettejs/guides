@@ -150,7 +150,7 @@ var GoodbyeView = Marionette.LayoutView.extend({
 Now when you build the app and inspect the HTML, you'll see one less `<div>` in
 the rendered output and the `<p>` tag will have the class we set.
 
-## Chaining Layouts
+## Nesting Layouts
 
 As you can see, we used another `LayoutView` for our `GoodbyeView`. Does that
 mean we can set a `regions` hash on that? Yes, we can! Let's do it. This time,

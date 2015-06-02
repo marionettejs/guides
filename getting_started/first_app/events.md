@@ -101,7 +101,7 @@ var PersonView = Marionette.LayoutView.extend({
 
   onClickItem: function(options) {
     var counter = options.model.get('click_count');
-    options.model.set(counter + 1);
+    options.model.set('click_count', counter + 1);
   }
 });
 
@@ -115,7 +115,7 @@ var PersonList = Marionette.CompositeView.extend({
   // Note the lower case v in Childview below
   onChildviewClickItem: function(options) {
     var counter = this.model.get('click_count');
-    this.model.set(counter + 1);
+    this.model.set('click_count', counter + 1);
   }
 });
 
@@ -178,7 +178,7 @@ var PersonView = Marionette.LayoutView.extend({
 
   onClickItem: function(options) {
     var counter = options.model.get('click_count');
-    options.model.set(counter + 1);
+    options.model.set('click_count', counter + 1);
   }
 });
 
@@ -195,7 +195,7 @@ var PersonList = Marionette.CompositeView.extend({
 
   onChildviewClickItem: function(options) {
     var counter = this.model.get('click_count');
-    this.model.set(counter + 1);
+    this.model.set('click_count', counter + 1);
   }
 });
 
@@ -228,7 +228,7 @@ var PersonList = Marionette.CompositeView.extend({
 
   onChildviewClickItem: function(options) {
     var counter = this.model.get('click_count');
-    this.model.set(counter + 1);
+    this.model.set('click_count', counter + 1);
   },
 
   updateClickCount: function(model, value, options) {
@@ -290,7 +290,7 @@ var PersonView = Marionette.LayoutView.extend({
 
   onClickItem: function(options) {
     var counter = options.model.get('click_count');
-    options.model.set(counter + 1);
+    options.model.set('click_count', counter + 1);
   }
 ```
 

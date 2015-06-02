@@ -5,6 +5,8 @@
 * [Getting Started](getting_started/README.md)
    * [Installing Marionette](getting_started/installing_marionette.md)
    * [Installing Marionette Inspector](getting_started/installing_inspector.md)
+   * [Tutorial](getting_started/first_app/introduction.md)
+      * [Your first view](getting_started/first_app/firstview.md)
 * [Creating an Application](application/README.md)
 * [Implementing Routing](approuter/README.md) 
 * [Connecting Data to Your Views](views/README.md)
