@@ -152,7 +152,7 @@ removed the `template` attribute as `CollectionView` has no template of its own.
 
 In `templates/todoitem.html` we simply have:
 
-```
+```html
 <%- item.text %> &mdash; <%- item.assignee %>
 ```
 

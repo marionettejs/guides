@@ -20,9 +20,9 @@ and its interaction with the surrounding page.
 
 ### Creating an Application
 
-From now on we'll be using the layout
-[described in the introduction][introduction], so let's move the bulk of our
-view code into `views/layout.js` and rejig it a little:
+We'll be using the layout [described in the introduction][introduction], so
+let's move the bulk of our view code into `views/layout.js` and rejig it a
+little:
 
 ```js
 var Backbone = require('backbone');
@@ -198,7 +198,7 @@ a model or a form template. We can safely remove the `todolist.html` template.
 The `todoitem.html` template is unchanged but we have a new `form.html`
 template:
 
-```
+```html
 <label for="id_text">Todo Text</label>
 <input type="text" name="text" id="id_text" value="<%- text %>" />
 <label for="id_assignee">Assign to</label>
@@ -288,7 +288,7 @@ individual items being attached and render only what needs to be rendered.
 
 For completeness, the `layout.html` template is detailed below:
 
-```
+```html
 <div class="list"></div>
 <div class="form"></div>
 ```
