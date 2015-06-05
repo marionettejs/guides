@@ -10,4 +10,4 @@ If you're interested, you can view a
 todo app in the appendix.
 
 
-[appendix]:(appendix/getting_started/tutorial/todo_app.md)
+[appendix]:(../../appendix/getting_started/tutorial/todo_app.md)

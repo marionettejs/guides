@@ -9,6 +9,7 @@
     * [Your first view](getting_started/tutorial/firstview.md)
     * [Adding new items](getting_started/tutorial/models.md)
     * [Laying out your page](getting_started/tutorial/layouts.md)
+    * [Summary](getting_started/tutorial/summary.md)
 * [Creating an Application](application/README.md)
 * [Implementing Routing](approuter/README.md)
 * [Connecting Data to Your Views](views/README.md)
@@ -19,3 +20,4 @@
 * [DRYing up Your Views](behaviors/README.md)
 * [FAQ](faq/README.md)
 * [Cookbook](cookbook/README.md)
+* [Appending](appendix/introduction.md)
