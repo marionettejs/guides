@@ -212,3 +212,5 @@ var ToDo = Backbone.Model.extend({
 
 module.exports = ToDo;
 ```
+
+[todotutorial]:(getting_started/tutorial/introduction.md)
