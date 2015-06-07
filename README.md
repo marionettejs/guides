@@ -49,11 +49,11 @@ receive a FREE sticker (the [#1 reply](http://www.devbattles.com/en/sand/post-67
 
 {% include "SUMMARY.md" %}
 
-[marionette]:http://marionettejs.com/
+[marionette]: http://marionettejs.com/
 [gitbook]: http://help.gitbook.com
 [markdown]: http://help.gitbook.com/format/markdown.html
 [repo]: https://github.com/marionettejs/guides
-[tutorial]: ./getting_started/first_app/introduction.md
-[docs]:http://marionettejs.com/docs/current
-[installing]:./getting_started/installing_marionette.md
-[why]:./why_marionette.md
+[tutorial]: ./getting_started/tutorial/README.md "Marionette tutorial"
+[docs]: http://marionettejs.com/docs/current
+[installing]: ./getting_started/installing_marionette.md
+[why]: ./why_marionette.md
