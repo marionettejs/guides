@@ -167,4 +167,4 @@ keep track of our job list.
 
 [installing]: ../installing_marionette.md "Installing Marionette"
 [models]: ./models.md "Storing user-entered data"
-[underscore]: ./underscore.md "Underscore.js"
+[underscore]: http://underscorejs.org/#template "Underscore.js"

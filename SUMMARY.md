@@ -20,4 +20,5 @@
 * [DRYing up Your Views](behaviors/README.md)
 * [FAQ](faq/README.md)
 * [Cookbook](cookbook/README.md)
-* [Appending](appendix/introduction.md)
+* [Appendix](appendix/introduction.md)
+    * [Todo app](appendix/getting_started/tutorial/todo_app.md)
