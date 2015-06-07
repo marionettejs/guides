@@ -165,6 +165,6 @@ itself for us.
 In the next chapter, we're going to add new items to this collection so we can
 keep track of our job list.
 
-[installing]:[../installing_marionette.md]
-[models]:[./models.md]
-[underscore][./underscore.md]
+[installing]: ../installing_marionette.md "Installing Marionette"
+[models]: ./models.md "Storing user-entered data"
+[underscore]: ./underscore.md "Underscore.js"
