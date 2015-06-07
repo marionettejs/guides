@@ -384,4 +384,4 @@ we just want to re-render the form itself and handle the list separately. We'll
 go into this in our next chapter.
 
 
-[eventlist]:[http://backbonejs.org/#Events-catalog]
+[eventlist]: http://backbonejs.org/#Events-catalog "Backbone Events"

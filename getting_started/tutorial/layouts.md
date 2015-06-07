@@ -296,3 +296,5 @@ For completeness, the `layout.html` template is detailed below:
 
 As a template, the layout has been relegated to just an overarching frame that
 delegates most of its rendering responsibilities to its subordinate views.
+
+[introduction]: ./introduction.md "Marionette introduction"

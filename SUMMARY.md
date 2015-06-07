@@ -5,7 +5,7 @@
 * [Getting Started](getting_started/README.md)
    * [Installing Marionette](getting_started/installing_marionette.md)
    * [Installing Marionette Inspector](getting_started/installing_inspector.md)
-   * [Tutorial](getting_started/tutorial/introduction.md)
+   * [Tutorial](getting_started/tutorial/README.md)
     * [Your first view](getting_started/tutorial/firstview.md)
     * [Adding new items](getting_started/tutorial/models.md)
     * [Laying out your page](getting_started/tutorial/layouts.md)
