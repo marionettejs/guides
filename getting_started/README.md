@@ -21,6 +21,6 @@ major components in Backbone and Marionette and build a fully functional
 application.
 
 
-[tutorial]: ./getting_started/first_app/introduction.md
-[docs]:http://marionettejs.com/docs/current
-[installing]:./getting_started/installing_marionette.md
+[tutorial]: ./getting_started/first_app/README.md "Marionette tutorial"
+[docs]: http://marionettejs.com/docs/current "Reference documentation"
+[installing]: ./getting_started/installing_marionette.md
