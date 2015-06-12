@@ -127,5 +127,6 @@ both worlds. Even better, this pattern only requires us to change the template
 that our server generates - our JavaScript files are safely cached and we don't
 need to keep duplicating the same basic functionality!
 
+
 [readme]: ./README.md "Application"
 [router]: ../approuter/README.md "AppRouter"
