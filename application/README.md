@@ -92,13 +92,15 @@ var app = new Marionette.Application({
   }
 });
 
-app.start(initialData: window.initialData);
+app.start({initialData: window.initialData});
 ```
 
+All we've done here is pass `window.initialData` as an argument to `app.start`.
 Maintaining a dependency on the page in our driver file is perfectly
-acceptable - that is its purpose after all! When we want to test our app, we can simply inject the options directly into `Layout` in our test runner. For this
+acceptable - that is its purpose after all! When we want to test our app, we can
+simply inject the options directly into `Layout` in our test runner. For this
 reason, it's preferable to keep our `driver.js` file as simple as possible - we
 want to minimize the amount of setup code we need to duplicate.
 
 
-[router]: ../approuter/README.md
+[router]: ../approuter/README.md "AppRouter"
