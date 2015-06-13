@@ -23,7 +23,7 @@ hello.render();  // 6
 
 We then create a file in `templates` called `layout.html` and set it up as such:
 
-```
+```html
 <p>Hello, world!</p>
 ```
 

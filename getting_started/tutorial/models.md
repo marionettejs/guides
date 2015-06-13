@@ -47,7 +47,7 @@ where the `childView` items are to be attached to the template using
 `childViewContainer` and pass in the template. In `templates/todolist.html` we
 have:
 
-```
+```html
 <ul></ul>
 <form>
   <label for="id_text">Todo Text</label>
@@ -289,7 +289,7 @@ Back in our first chapter, we were able to render data based on the model
 fields. We'll use this to handle our form as well. Firstly we'll open up our
 `todolist.html` template:
 
-```
+```html
 <ul></ul>
 <form>
   <label for="id_text">Todo Text</label>

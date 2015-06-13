@@ -11,6 +11,8 @@
     * [Laying out your page](getting_started/tutorial/layouts.md)
     * [Summary](getting_started/tutorial/summary.md)
 * [Creating an Application](application/README.md)
+    * [Integrating with Routing](application/routing.md)
+    * [Multiple Application Starters](application/multiple_apps.md)
 * [Implementing Routing](approuter/README.md)
 * [Connecting Data to Your Views](views/README.md)
 * [Handling Data Latency](data_latency/README.md)
