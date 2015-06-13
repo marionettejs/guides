@@ -86,4 +86,4 @@ also allows us to use Marionette for certain screens; a major benefit in
 particularly large legacy applications that would take a long time to completely
 port over to a JS app which may not be worth the cost.
 
-[browserify]: https://browserifyjs.org
+[browserify]: https://browserify.org
