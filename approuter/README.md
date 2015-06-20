@@ -49,7 +49,7 @@ provide a URL routing engine that mirrors those found in the more mature
 server-side web frameworks such as those provided by Django, Flask, and Ruby on
 Rails.
 
-There are two steps to routing in Marionette:
+There are two aspects to routing in Marionette:
 
   1. Set the fragment for state to restore later.
   2. Render the view matching the fragment on page load.
@@ -239,12 +239,28 @@ Our router then, at page load, attempts to match a fragment and triggers the
 main layout to render the correct view.
 
 
+## Starting the Router
+
+When you load the page, you'll notice the page hasn't responded to the fragment.
+There's one last thing we need to do - start the routing framework. Luckily for
+us, this is quite simple. We just need to call the following method after
+[initializing our application][application]:
+
+```js
+Backbone.history.start();
+```
+
+
 ## Browser History API
 More recently, browser vendors recognized the benefits of this pattern and began
 working on the Browser History and Push State APIs. These combined the benefits
 of using the fragment with more natural looking URLs that could be recognized by
 the server too.
 
+Backbone and Marionette support this API by setting `{pushState: true}` in the
+options passed to `start` like so: `Backbone.history.start({pushState: true})`.
 
-[controllers]: ./attach_controllers.md "Attaching Controllers"
+
 [appendix]: ../appendix/approuter/router.md "Full Router Example"
+[application]: ../application/README.md "Creating an Application"
+[controllers]: ./attach_controllers.md "Attaching Controllers"
