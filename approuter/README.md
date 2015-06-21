@@ -252,6 +252,7 @@ Backbone.history.start();
 
 
 ## Browser History API
+
 More recently, browser vendors recognized the benefits of this pattern and began
 working on the Browser History and Push State APIs. These combined the benefits
 of using the fragment with more natural looking URLs that could be recognized by
@@ -259,6 +260,9 @@ the server too.
 
 Backbone and Marionette support this API by setting `{pushState: true}` in the
 options passed to `start` like so: `Backbone.history.start({pushState: true})`.
+The History API is a great way to support natural-looking URLs while still
+using a JavaScript-powered SPA. However, it only works if your web server
+backend has been designed to support it.
 
 
 [appendix]: ../appendix/approuter/router.md "Full Router Example"
