@@ -1,5 +1,6 @@
-Bootstrap workflow
-==================
+# Marionette Guides
 
-A book to discover the bootstrap workflow.
-This book is available in differents languages (_work in progress_) in [gitbook library](http://erixtekila.gitbooks.io/boostrap/) 
+This book (WIP) contains the entire crowd-sourced guides for **[Marionette][marionette]**.
+
+It is built using [GitBook][gitbook], a tool for building books using Git and
+[Markdown][markdown].
