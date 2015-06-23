@@ -1,1 +1,0 @@
-# DRYing up Your Views with Behaviors
