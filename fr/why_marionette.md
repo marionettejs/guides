@@ -1,37 +1,71 @@
-# Why Marionette?
+# Pourquoi _Marionette_ ?
 
-Building large web applications using [Backbone.js][backbone] can be hard.  Backbone is a great tool, but it's designed to be minimalist and useful in a wide variety of situations.  As a result, you get less guidance and support from the tool as you scale up than you do from more opinionated frameworks like [Angular][angular] and [Ember][ember].  When a Backbone application grows, maintaining it requires adding structure, either through a custom set of conventions and components, or based on somebody elses framework.  There are a lot of different Backbone frameworks out there, but we think you'll enjoy using [Marionette.js][marionette].  
+Créer de larges applications web à l'aide de [Backbone.js][backbone] peut s'avérer difficile. _Backbone_ est un outil magnifique, mais il a été défini pour être minimaliste, utilisé pour une répondre aux situations les plus diverses. Dès lors, vous aurez moins d'aide et de support de sa part, surtout lorsque votre application tend à grossir, que des _framework_ plus "dogmatiques" tel que [Angular][angular] ou [Ember][ember].  Quand une application Backbone prend de l'ampleur, la maintenir requiert d'y ajouter une structure, soit grâce à une série de conventions et de composants personnalisés, soit basé sur le _framework_ d'un tiers. Il existe e nombreux _framework_ Backbone, mais nous pensons que vous saurez apprécier utiliser [Marionette.js][marionette].  
 
-###  Decisions, Decisions
+###  Décisions, Décisions
 
-Developing with Backbone is an exercise in decision making.  Backbone provides you with a minimalist set of Models and Collections that essentially serve as light wrappers around JavaScript objects synced over Ajax. It provides you lightweight Views that associate an object with a DOM node and some data.  It provides a router that associates URLs with function, and it provides helpers for managing events between all of these options.  That leaves Backbone developers with many questions to answer.
+Développer avec _Backbone_ est un exercice de prise de décisions. _Backbone_ vous apporte un jeu minimaliste de `Models` et de `Collections` servant principalement d'enveloppe légère autour d'objets JavaScript, synchronisés via _Ajax_. Il vous propose des `View` légères associant une série de données avec un nœud du _DOM_. Il dispose d'un `Router` associant des _URLs_ à des fonctions, il dispose de méthodes utilitaires pour gérer par des événements toutes ces options. Ce qui laisse aux développeurs beaucoup de questions en suspens…
 
-- **How do you render Views?** - By default, Backbone's render method does nothing. To use it, you need to fill in your own rendering function.  That could use a templating system like Underscore templates or Handlebars, jQuery manipulation of the DOM, or simple string inserts with `.innerHTML()`.  You could use the same method for every View, or mix it up and use different methods for different Views. 
-- **How do you manage relationships between objects?** - By default Backbone provides a way to manage sets of Models as a Collection, but it doesn't have any built-in utilities for handling nested Models or Collections.  And if you want to nest your Views you're completely on your own.  You can have a View manage it's child Views, have a single object that manages all Views, or let each View manage itself.
-- **How do your Views communicate between each other?** - Views will often need to communicate with each other.  If for instance one View needs to change the contents of another area of the page, it could do so directly through jQuery, could get a direct reference to a View managing that area and call a function on it, change a Model that another View listens to, adjust a URL that a router listens to, or fire an event that another View could respond to. Apps can use some combination of all of these methods.
-- **How do you avoid repeating yourself?** - If you're not careful, Backbone can involve a lot of boilerplate.  Taking the naive approach, you could end up writing rendering code, View management code and event management code over and over again in every View.  If you try to get around that using inheritance, you can end up with brittle designs that require you to make calls down to a Views prototype when you want View specific code.  Avoiding that type of repetition and the maintenance overhead it brings is a challenge.
-- **How do you manage a View's life-cycle??** - What code is responsible for rendering a View?  Does it render itself on creation?  Or is it the responsibility of the object creating it?  Does it get attached to the DOM immediately on render? Or is that a separate step?  When the View is removed from the DOM or deleted, how do you handle any cleanup that is needed?
-- **How do you structure your application?** - How do you get your app started?  Do you have a central object that starts everything, or is it more distributed?  If you do centralize, do you use the router to start things, or provide some other object for managing your code?
-- **How do you prevent memory leaks?** - If your application is a [Single Page Application][spa] or it contains long lasting interactive sections, another issue that you may need to deal with is memory leaks.  It can be easy to create "zombie Views" in Backbone if you're not attentive to the need to unregister events attached to a View after you're done with it.
+- **Comment afficher les `Views`?** - Par défaut, la méthode `render` de _Backbone_ n'a pas d'implémentation. Pour l'utiliser, vous devrez la produire vous même.
+  + Cela peut passer par l'usage d'un moteur de _templates_ tel qu'_Underscore_ ou _Handlebars_, des manipulations du DOM via _jQuery_, ou des insertions de chaines avec `.innerHTML()`.
+  + Vous pouvez utiliser la même méthode sur chaque `View`, ou mélanger l'ensemble de ces méthodolgies.
+- **Comment gérez-vous les relations inter-objets ?** - Par défaut _Backbone_ permet de relier une série de `Models` en `Collection`, mais il ne dispose d'aucun principe de gestion de l'imbrication des `Models` ou des `Collections`. Et si vous souhaitez encapsuler vos `Views`, vous vous retrouverez totalement seul.
+  + Vous pourrez avoir une `View` gérer des sous `Views`,
+  + avoir un objet pivot gérer toutes les `Views`,
+  + ou laisser chaque `View` s'autogérer.
+- **Comment vos `Views` communiquent-elles ensemble ?** - Les `Views` ont souvent besoin d'échanger entre-elles. Si par exemple, une `View` a besoin de changer de contenu d'une autre zone de la page,
+  + elle peut le faire directement via _jQuery_,
+  + peut également disposer d'une référence directe à la `View` qui manipule cette zone et appeler une fonction dessus,
+  + peut aussi modifier un `Model` écouté par une autre `View`,
+  + faire appel à une _URL_ écouté par le `Router`,
+  + ou encore soumettre une événement auquel une autre `View` peut répondre. Chaque application peut utilier une combinaison de toutes ces méthodes.
+- **Comment éviter les duplications de code ?** - Si vous êtes inattentionné, votre projet _Backbone_ risque de se transformer en code spaghetti.
+  + Si vous adoptez une approche naive, vous finirez par écrire le code de l'affichage, le code de gestion des `View` et de la gestion événementielle, encore et toujours pour chaque `View`.
+  + Si vous tentez de contourner cela via l'héritage, vous allez obtenir une structure fragile, nécessitant des appels aux _prototype_ des `Views` afin d'activer une portion de code spécifique.
+  + Eviter ce genre de répétitions, sans compter le surplus de maintenance relève du _challenge_.
+- **Comment gérez-vous le cycle de vie des `View` ?**
+  + Quel code est responsable de l'affichage d'une `View` ?
+  + Est-ce qu'elle s'affiche elle-même à sa création ? Ou est-ce la responsabilité de l'objet qui la crée ?
+  + Est-ce qu'elle est insérée dans le _DOM_ immediatement ? Ou est-ce une étape séparée ?
+  + Lorsque que la vue sera ôtée du _DOM_ ou supprimée, quelle procédure se charge du nettoyage des dépendances ?
+- **Comme,nt structurez-vous votre application ?** - Comment démarrez votre application ?  
+  + Disposez-vous d'un objet centrale qui lance tout
+  , ou est-ce réparti ?
+  + Dans le ca d'une centralisation, utilisez-vous le `Router` comme amorce, ou d'autres objets pour activer les  codes ?
+- **Comment vous prémunissez-vous des fuites mémoire ?** - Si votre application est une [_Single Page Application_][spa] ou qu'elle fait persister de longues sessions interactives, un nouveau problème émerge, car vous allez devoir gérer la mémoire. Il est relativement simple de créer des _"zombie Views"_ avec _Backbone_ si vous êtes inattentif aux événements attachés à une `View` après en avoir fini avec elle.
 
-That's just a small sample of the type of decision making that you have to make for a Backbone project.  Those questions signify flexibility, but they also represent mental overhead.  If you're like me, you see these common problems and think that you can get better results relying on a shared solution that leverages the experience of the community.  
+Il s'agit d'un petit échantillon du type de décisions à prendre pour faire un projet _Backbone_. Ces questions mènent à la flexibilité, et confèrent une surcharge intellectuelle. Si vous êtes comme moi, vous voyez ces problèmes courants et sachez que vous obtiendrez de meilleurs résultats en réutilisant le savoir des expériences de la communauté.
 
-### What Does Marionette Give You?
+### Qu'est-ce que _Marionette_ vous propose ?
 
-Marionette is an attempt to provide this type of shared solution, capturing Backbone best practices as a set of components and design patterns.  So what value does it provide?  Marionette gives you:
+_Marionette_ est une tentative de mise en place d'une solution commune, jeu de composants et de _design patterns_, conservant les meilleures pratiques de _Backbone_. Donc que vous est-il proposé ? Quel est sa plus value ?
 
-- **A Standardized Rendering process** - Marionette takes an opinionated stand on how Views should be rendered.  Without any additional configuration, it will take a template that you specify with a View's template property, compile it with Underscore's templating function and pass it a model or collection.  If you need to pass it other data, or want to use a different template library, Marionette provides hooks to customize that process in a [DRY][dry] way.
-- **A consistent View lifecycle** - Marionette defines a consistent View life cycle where Views are initialized, rendered, shown, refreshed, and destroyed.  Each of these events has events and callbacks associated it, and any common boilerplate associated with them is handled behind the scenes. 
-- **The ability to define and manage complex layouts** - Marionette provides region objects that define portions of the DOM that can display and swap out Views.  Combined with utilities to manage child views, you can easily create deeply nested View structures with Marionette while minimizing complexity.
-- **A central event bus with semantic events to simplify communication between Views** - Marionette includes Backbone.Wreqr or Backbone Radio as an event bus to allow communication between Views without explicitly coupling them.  
+_Marionette_ vous propose :
+
+- **Un processus de rendu graphique standardisé**  
+  + _Marionette_ devient rigoureux sur la façon de restituer les `Views`. Sans configuration supplémentaires, il utilise un _template_ conservé en tant que propriété d'une `View`, la compile à l'aide de la fonction `_.template()` d'_Underscore_ et lui injecte les valeurs d'un `Model` ou d'une `Collection`.  
+  + Si vous avez besoin d'autres données, ou souhaitez utiliser un autre outil de _templating_ côté client, _Marionette_ expose une _API_ pour vous approprier ce procédé, de la façon la plus [DRY][dry] que possible.
+- **Un cycle de vie des `Views` cohérent**
+  + _Marionette_ définit un cycle de vie cohérent pour les `Views`, qu'elles soient initialisées, rendues, affichées, raffraichies, et détruites.  
+  + Toutes ces étapes sont accompagnées d'événements et de `callbacks` associés, mais surtout tout le code spaghetti est produit par derrière, en coulisse.
+- **La possibilité de gérer la complexité de l'affichage** -
+  + _Marionette_ dispose d'objets régions, définissant des portions de _DOM_ qui permettent l'affichage et la permutation de `Views`.
+  + Combiné avec des utilitaires de gestion des sous-vues, vous pouvez créer simplement des structures imbriquées de `Views` très complexes, tout en minimisant la complexité générale.
+- **Un _event bus_ centralisé, plus des événements sémantiques pour simplifier la communication entre `Views`** - _Marionette_ inclus _Backbone.Wreqr_ ou _Backbone.Radio_ comme un _event bus_ pour permettre une communication inter-vues sans découplage explicite.  
 - **Helpers to help you write DRY Code** - In addition to centralizing the rendering and view management code, Marionette provides hooks to allow you to abstract away details of the DOM and events in your View code, and a mechanism to pull common ui operations out into separate reusable objects
-- **Helpers to avoid "Zombie Views" and memory leaks** - Marionette's lifecycle includes an explicit destroy phase that cleans up many common sources of memory leaks, and provides a hook for you to take care of the rest
-- **A central Application object to initialize your application** - Using Marionette, you're able to specify a set of initializers that run any code that needs to be executed before your application starts, providing a clear structure and starting point to your app.
+- **Des fonctions utilitaires pour éviter les "Zombie Views" et fuites mémoire** - Le cycle de vie de _Marionette_  inclus des phases de destruction explixites pour nettoyer les sources les plus fréquentes de fuite de mémoire, et propose une _API_ pour vous occuper du reste.
+- **Un object `Application` centralisé pour gérer l'initialisation de vos applications** - En utilisant _Marionette_, vous serez apte à spécifier un jeu d'_initializers_ permettant de lancer n'importe quel code à excécuter avant que votre application ne démarre, conférant une structure éfficace et un point d'entrée à votre application.
 
-That's not the complete feature set, but it is the essential sales pitch. The important thing to understand is that Marionette provides a framework for building Backbone apps that builds on established practices from the Backbone community.  If you're building a Backbone application and want to focus on the problems that are specific to your application, Marionette is a great way to move past common issues and focus on what's unique to you.
+Ce ne sont pas que les seules fonctions possibles, mais les principes fondamentaux les plus vendeurs. Le plus important étant de comprendre que _Marionette_ est un _framework_ pour construire des application _Backbone_ à partir des recettes les plus éprouvées de la communauté.
 
-*This explanation is adapted from a blog post by a Marionette community member. You can find the original post [here][caseformn]*.
 
+*Cette explication est librement adaptéd'un billet de blogd'un membre de la communauté _Marionette_. Vous trouverez l'original [ici][caseformn]*.
+
+## En résumé, _Marionette_ est un complément de _Backbone_
+
+![Distribution of code](img/bbconf14_fw-comparison.png)
+_source
+James Smith http://fr.slideshare.net/JamesSmith158/bbconf-2014_
 
 [marionette]:http://marionettejs.com
 [backbone]: http://backbonejs.org

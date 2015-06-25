@@ -1,24 +1,16 @@
-# Get Started with Marionette
+# Démarrer avec _Marionette_
 
-There are a number of ways you can start with Marionette depending on how
-familiar you are working with JavaScript. You can follow the
-[tutorial][tutorial], learn about different Marionette topics, or jump into the
-[reference documentation][docs].
+De pultiples façons permettent de démarrer avec _Marionette_, cela dépend de votre taux de familiarité avec l'environnement  JavaScript. Vous pouvez suivre le [tutoriel][tutorial], apprendre des différents sujets _Marionette_, ou sauter dans la [documentation de reference][docs].
 
 
-## Install Marionette
+## Installer Marionette
 
-Like all JavaScript libraries, there are a number of ways to install Marionette,
-depending on your workflow. If you're new to JavaScript development, follow our
-simple guide for [installing Marionette][installing].
+Comme toute bibliothèque de code Javascript, il y a de nombreuses façons d'installer _Marionette_, cela dépend de votre _workflow_. Si vous débutez dans le développement Javascript, suivez notre guide pour [installer _Marionette_][installing].
 
 
-## Tutorial
+## Tutoriel
 
-Once you've installed Marionette and set up your environment, you'll want to
-build your first app! Our [tutorial][tutorial] will take you through all the
-major components in Backbone and Marionette and build a fully functional
-application.
+Dès que vous aurez installé _Marionette_ et configuré votre environment, vous souhaiterez construire votre première application ! Notre [tutorial][tutorial] vous guidera dans la découverte des principaux composants de _Backbone_ et _Marionette_ et construire une application complètement fonctionnelle.
 
 
 [tutorial]: ./tutorial/README.md "Marionette tutorial"

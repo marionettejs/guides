@@ -6,5 +6,18 @@
     "sidebar": {
       "Support": "https://gitter.im/marionettejs/backbone.marionette"
     }
-  }
+  },
+  "plugins": [
+      "-mathjax",
+      "-infinitescroll",
+      "richquotes",
+      "anchors"
+  ]
+  ,"pluginsConfig":
+    {
+        "richquotes" :
+        {
+            "todos" : true
+        }
+    }
 }

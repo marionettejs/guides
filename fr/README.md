@@ -1,47 +1,34 @@
 # Marionette Guides
 
-This book (WIP) contains the entire crowd-sourced guides for **[Marionette][marionette]**.
+Ce livre contient le guide communautaire pour maîtriser  **[Marionette][marionette]**.
 
-It is built using [GitBook][gitbook], a tool for building books using Git and
-[Markdown][markdown].
+Il est construit en utilisant [GitBook][gitbook], un outil pour bâtir des livres numériques autour de Git et du format [Markdown][markdown].
 
+## Pourquoi Marionette?
 
-## Why Marionette?
-
-With all the different frameworks available, why should you build your apps in
-Marionette? [Find out why][why] we think you should build your next app in
-Marionette.
+Avec tous ces différents frameworks disponibles, pourquoi voudriez-vous construire votre application avec _Marionette_ ? [Découvrez pourquoi][why] nous pensons que vous devriez construire votre future application avec _Marionette_.
 
 
-## Get Started with Marionette
+## Démarrez avec Marionette
 
-There are a number of ways you can start with Marionette depending on how
-familiar you are working with JavaScript. You can follow the
-[tutorial][tutorial], learn about different Marionette topics, or jump into the
-[reference documentation][docs].
+Il y a de multiples façons de débuter avec _Marionette_. Vous pouvez suivre le [tutoriel][tutorial], appréhender différents sujets spécifiques à Marionette ou vous lancer dans [la documentation de référence][docs].
 
 
-### Installing Marionette
+### Installer Marionette
 
-Like all JavaScript libraries, there are a number of ways to install Marionette,
-depending on your workflow. If you're new to JavaScript development, follow our
-simple guide for [installing Marionette][installing].
+Comme tous les outils Javascript, et selon votre _workflow_, il y a de nombreuses façon d'installer Marionette. Si vous commencez à utiliser un environnement Javascript, veuillez consulter notre guide pour [installer Marionette][installing].
 
 
-### Tutorial
+### Tutoriel
 
-Once you've installed Marionette and set up your environment, you'll want to
-build your first app! Our [tutorial][tutorial] will take you through all the
-major components in Backbone and Marionette and build a fully functional
-application.
+Une fois _Marionette_ installé et votre environnement configuré, vous allez construire votre première app ! Notre [tutoriel][tutorial] vous guidera au travers de tous les composants essentiels de _Backbone_ et _Marionette_ afin de créer une application complète.
 
 
-## Contribute
+## Contribuez
 
-You can contribute to improve these guides on [GitHub][repo] by sending in a pull request with your changes.
+Vous pouvez contribuer à améliorer ces guide sur [GitHub][repo] en soumettant des _pull request_ de vos modifications.
 
-Anyone who contributes and gets their pull requests merged in is eligible to
-receive a FREE sticker (the [#1 reply](http://www.devbattles.com/en/sand/post-670-Top+20+replies+by+Programmers+when+their+programs+don%27t+work) by developers when their programs don't work).
+Tous ceux qui contribueront et verrons leur _pull requests_ fusionnées seront eligible à recevoir un sticker gratuit (la 1ère réponse [#1 reply](http://www.devbattles.com/en/sand/post-670-Top+20+replies+by+Programmers+when+their+programs+don%27t+work) des développeurs dont le programme échoue).
 
 ![sticker](sticker.png)
 

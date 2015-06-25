@@ -1,24 +1,22 @@
-# Making your applications dance!
+# Faire dancer votre application !
 
-Welcome to the getting started guide for Backbone Marionette.
-
-
-## What will I get from this tutorial?
-
-After reading this tutorial you will be able to write your own Marionette
-applications from scratch. We will build a very simple todo list that we can add
-items to and remove items from.
-
-This tutorial will teach you how to render your data with views, structure your
-application layout, route your user from the address bar, and integrate with
-data stored in the server.
+Bienvevue dans le guide de démarrage pour `Backbone Marionette`.
 
 
-## Things to know
+## Que vais-je découvrir dans ce tutoriel ?
 
-Before we start the tutorial, we'll set up a basic directory structure to keep
-everything in order. We'll create a separate folder each for collections,
-models, routers, templates, and views. The folder structure is:
+Après avoir lu ce tutoriel, vous serez capable de débuter une application `Marionette` complète. Nous allons construire une simple liste de taches, dans laquelle il est possible d'ajouter et de retirer des éléments.
+
+Ce tutoriel vous apprendra comment
+- associer des données à vos `Views`,
+- architecturer votre application,
+- conduire les utilisateurs via la barre d'_URL_
+- et de synchroniser des données en provenance du serveur.
+
+
+## A savoir
+
+Avant de commencer, nous allons définir une structure simple afin de tout ordonner. Nous allons créer un répertoire dédié aux `Collection`, `Model`, `Router`, `template`  et `View`. La structure se compose ainsi :
 
 ```
 |-- index.html
@@ -31,10 +29,9 @@ models, routers, templates, and views. The folder structure is:
      |-- views/
 ```
 
-Whenever we reference a file, we will typically refer to the filename and the
-type of file corresponding to a directory in the above structure.
+A chaque fois que nous ferons référence à un fichier, nous réfèrerons à son nom et à son répértoire parent.
 
-Our `index.html` file will be:
+Notre `index.html` :
 
 ```html
 <!DOCTYPE html>
@@ -48,21 +45,12 @@ Our `index.html` file will be:
 </html>
 ```
 
-If you haven't already, go through the
-[Installing Marionette](../installing_marionette.md) section for instructions in
-how to setup and install a Marionette application.
+Si vous ne l'avez déjà fait, rendez-vous à la section [Installation de Marionette](../installing_marionette.md) pour des instructions sur la façon d'installer une application _Marionette_.
 
-You can optionally use a CSS framework such as
-[Bootstrap](https://getbootstrap.com) to improve how your application looks.
-This tutorial will stick to a simpler to understand structure and HTML.
+En option, utilisez un _framework CSS_ tel que [Bootstrap](https://getbootstrap.com) pour améliorer l'apparence de votre application.
+Ce tutoriel conserve pour sa part une structure HTML la plus simple.
 
-This tutorial will regularly ask you to restructure code from previous
-chapters. We will detail every change, so if you can't see a file, assume that
-it remains unchanged.
+Ce tutoriel vous demandera de "refactorer" fréquemment le code des chapitres précédents. Tous les détails seront décrits pas à pas sur ce qui évolue, ainsi, si vous ne voyez pas apparaître un fichier, c'est qu'il n'a pas changé.
 
-
-## Experimentation
-
-Throughout this tutorial you should feel free to experiment with the code
-samples to see if you can understand what's happening. Try different options,
-templates, classes, or even write some custom logic.
+> **Note** Experimentation :
+A travers ce tutoriel, sentez-vous libre d'experimenter à partir des exemples, afin d'appréhender ce qu'il se produit. Tentez différentes options, _templates_, classes, ou même des logiques personnalisées.

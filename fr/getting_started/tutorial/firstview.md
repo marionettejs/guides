@@ -1,12 +1,11 @@
 # Hello, world
 
-We're going to start by building a very simple view that simply displays some
-text to the world.
+Nous allons commencer par définir une `View` très simple qui se contente d'adresser nos salutations.
 
 
-## Creating our view
+## Créons notre `View`
 
-Let's get started! Open up `driver.js` and enter the following:
+Commençons ! Ouvrez `driver.js` et ajoutez le code suivant :
 
 ```js
 var Marionette = require('backbone.marionette');  // 1
@@ -21,45 +20,45 @@ var hello = new HelloWorld();  // 5
 hello.render();  // 6
 ```
 
-We then create a file in `templates` called `layout.html` and set it up as such:
+Ensuite, nous créons un fichier dans le dossier `templates` called `layout.html` et le définissons ainsi :
 
 ```html
 <p>Hello, world!</p>
 ```
+> **todo** Ajoutez à _browserify_ dans `package.json`  une _transform_ pour les templates _underscore_
+```sh
+npm install --save-dev node-underscorify
+```
+```json
+"build": "./node_modules/browserify/bin/cmd.js -t node-underscorify app/driver.js -o static/js/app.js"
+```
+
+### Que cela signifie t-il ?
+
+Le fichier _template_ lui-même est plutôt compréhensible, intéressons-nous à `driver.js`:
+
+  1. Import de _Marionette_
+  2. Création d'une nouvelle typoe de `View` nommée `HelloWorld` qui provient d'une extension de _Marionette_ `LayoutView`. Nous entrerons dans plus de détails dans un moment.
+  3. Nous attachons la vue à un élément du _DOM_. Il s'agit en fait d'un sélecteur jQuery, nous pouvons utiliser à cet endroit n'importe quel selecteur jQuery valide.
+  4. Nous devons définir un _template_ à afficher à nos utilisateurs.
+  5. Nous devons créer une instance de notre classe `HelloWorld` avant de pouvoir faire quoique ce soit d'utile avec.
+  6. Désormais la parade commence ! Nous appelons la méthode `render()` pour afficher le _template_ à l'écran.
 
 
-### What does this all mean?
+### Lancer la compilation
 
-The template file itself is pretty straightforward, so let's focus on
-`driver.js`:
-
-  1. Import Marionette
-  2. Create a new type of view called `HelloWorld` that borrows from the
-    standard Marionette LayoutView. We'll go into more depth in that shortly.
-  3. We direct the view to the element we want to attach it to. This is a
-    jQuery selector and we can use any valid jQuery selector here.
-  4. We must set a template to display to our users.
-  5. We must create an instance of our `HelloWorld` class before we can do
-    anything useful with it.
-  6. Now the fun stuff begins and we call `render()` to display the template
-    on the screen.
+Après avoir [compilé le résultat][installing],  rendez-vous depuis votre navigateur sur l'URL `index.html`  pour observer l'affichage produit.
+Vous venez de construire votre première application Javascript avec `Marionette` !
 
 
-### Running it all
+## Construire une application de taches
 
-After [compiling the file][installing], navigate to `index.html` in your browser
-to see it render on your screen. You've just built your first JavaScript
-application with Marionette!
-
-
-## Building a ToDo application
-
-Now that we have a view, let's do something a little more interesting and render
-a pre-defined list of ToDo items. We'll need a to use a
-[`Backbone Model`][models] to store the list in a way that our `LayoutView` can
-see it. Reopen our `driver.js` file:
+Désormais, nous avons une `View`, faisons quelque chose d'un peu plus intéressant en restituant une liste prédéfinie de taches. Nous allons avoir besoin d'un [`Backbone Model`][models] pour sauvegarder la liste de telle façon que que notre `LayoutView` puisse y accéder. Ré-ouvrez notre fichier `driver.js` :
 
 ```js
+// FIXME Expose underscore as global
+_ = require( "underscore" );
+
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 
@@ -72,7 +71,7 @@ var TodoList = Marionette.LayoutView.extend({
     this.model = new Backbone.Model({
       items: [
         {assignee: 'Scott', text: 'Write a book about Marionette'},
-        {assignee: 'Andrew': text: 'Do some coding'}
+        {assignee: 'Andrew', text: 'Do some coding'}
       ]
     });
   }
@@ -82,13 +81,9 @@ var todo = new TodoList();
 todo.render();  
 ```
 
+Le point central de cette modification tient l'insertion d'un objet en une instance de `Backbone.Model`. Les modèles _Backbone_ s'intègrent aisément avec les _templates_, conférant un accès simple à la source de données. Nous verrons dans plusieurs chapitres à quel point les modèles peuvent être puissants en ce qui concerne nos vues.
 
-The major point of note is that we're wrapping our object in a `Backbone.Model`
-instance. Backbone models cleanly integrate with templates and make it easy to
-access their data. We'll see in a few chapters how powerful models can be for
-our views.
-
-Next we'll modify our `templates/layout.html` file to take advantage of this:
+Modifions notre fichier `templates/layout.html` pour prendre avantage de ce cahngement :
 
 ```js
 <ul>
@@ -98,20 +93,19 @@ Next we'll modify our `templates/layout.html` file to take advantage of this:
 </ul>
 ```
 
-We're using the built-in [Underscore template engine][underscore] to render our
-item list. You should have a list of two items detailing simple todo items. We
-now have a list of items being rendered on the page but it all feels a little
-clunky. What happens if we want to add or remove items in this list?
+Nous utilisons [le moteur de templateUnderscore][underscore] pour restituer notre liste d'éléments. Vous devriez obtenir une liste de deux éléments.
+Nous avons désormais une liste rendue dans la page, mais cela semble un peu maladroit. Qu'arrive t-il si nous souhaitons ajouter ou supprimer des entrées à cette liste ?
 
 
-## Collections and CollectionViews
+## `Collections` and `CollectionViews`
 
-Our list of items is really a collection, so we'll use the `Backbone.Collection`
-to model it. We'll also use a view that specializes in rendering lists of data -
-the `CollectionView`. Back in our `driver.js` file, we're going to use a couple
-of views:
+Notre liste d'entrées correspond vraiment à une collection, nous allons donc utiliser une  `Backbone.Collection` pour la modéliser. Nous allons également utiliser une vue se spécialisant dans la restituion de liste de données -
+la `CollectionView`. Retour à notre fichier `driver.js`, nous allons utiliser plusieurs vues :
 
 ```js
+// FIXME Expose underscore as global
+_ = require( "underscore" );
+
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 
@@ -131,7 +125,7 @@ var TodoList = Marionette.CollectionView.extend({
   initialize: function() {
     this.collection = new Backbone.Collection([
       {assignee: 'Scott', text: 'Write a book about Marionette'},
-      {assignee: 'Andrew': text: 'Do some coding'}
+      {assignee: 'Andrew', text: 'Do some coding'}
     ]);
   }
 });
@@ -140,30 +134,22 @@ var todo = new TodoList();
 todo.render();
 ```
 
+La première chose que nous avoins fait, est d'ajouter une nouvelle vue et de la relier à une
+`CollectionView` en utilisant l'attribut `childView`. Nous avons également modifié la propriété
+`this.model` pour `this.collection` au sein de la méthode `initialize` de notre nouvelle `CollectionView` et supprimé la clé `items`.
 
-The first thing we've done is add another view and attached it to our
-`CollectionView` using the `childView` attribute. We also changed out
-`this.model` for `this.collection` in the `initialize` method of our newly
-minted `CollectionView` and removed the wrapping `items` key.
+La `CollectionView` est une vue qui parcoure `this.collection` et restitue une instance de son attribut `childView` pour chacune des entrées trouvées.  Nous avons supprimé la propriété  `template` car la `CollectionView` n'a plus de  _template_ en soi.
 
-The `CollectionView` is a view that goes through `this.collection` and renders
-an instance of its `childView` attribute for each item that it finds. We've
-removed the `template` attribute as `CollectionView` has no template of its own.
-
-In `templates/todoitem.html` we simply have:
+Dans `templates/todoitem.html` nous avons simplement :
 
 ```html
-<%- item.text %> &mdash; <%- item.assignee %>
+<%- text %> &mdash; <%- assignee %>
 ```
 
 
-That's it! Marionette knows how to build up the surrounding `ul` and `li` tags
-and inserts the iteration for us. Even better, if we wanted to add/remove items
-in the collection, `CollectionView` sees that and automatically re-renders
-itself for us.
+C'est tout ! _Marionette_ sait comment construire l'enveloppe des éléments `ul` et `li` et insère les données de l'itération pour nous. Encore mieux, si nous voulions ajouter/supprimer des entrées de la collecion, `CollectionView` le repère et le restitue automatiquement pour nous.
 
-In the next chapter, we're going to add new items to this collection so we can
-keep track of our job list.
+Dans le prochain chapitre, nous allons ajouter de nouvelles entrées à cette collection, de telle manière à garder l'état de notre liste de taches.
 
 [installing]: ../installing_marionette.md "Installing Marionette"
 [models]: ./models.md "Storing user-entered data"
