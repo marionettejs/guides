@@ -64,22 +64,22 @@ var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 
 
-var TodoList = Marionette.LayoutView.extend({  
-  el: '#app-hook',  
+var TodoList = Marionette.LayoutView.extend({
+  el: '#app-hook',
   template: require('./templates/layout.html'),
 
   initialize: function() {
     this.model = new Backbone.Model({
       items: [
         {assignee: 'Scott', text: 'Write a book about Marionette'},
-        {assignee: 'Andrew': text: 'Do some coding'}
+        {assignee: 'Andrew', text: 'Do some coding'}
       ]
     });
   }
 });
 
 var todo = new TodoList();
-todo.render();  
+todo.render();
 ```
 
 
@@ -122,7 +122,7 @@ var ToDo = Marionette.LayoutView.extend({
 });
 
 
-var TodoList = Marionette.CollectionView.extend({  
+var TodoList = Marionette.CollectionView.extend({
   el: '#app-hook',
   tagName: 'ul',
 
@@ -131,7 +131,7 @@ var TodoList = Marionette.CollectionView.extend({
   initialize: function() {
     this.collection = new Backbone.Collection([
       {assignee: 'Scott', text: 'Write a book about Marionette'},
-      {assignee: 'Andrew': text: 'Do some coding'}
+      {assignee: 'Andrew', text: 'Do some coding'}
     ]);
   }
 });
