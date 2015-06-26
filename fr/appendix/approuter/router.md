@@ -51,7 +51,7 @@ var initialData = {
       ]
     },
     {
-      author: 'Andrew':
+      author: 'Andrew',
       title: 'How to use Routers',
       content: '...',
       id: 17

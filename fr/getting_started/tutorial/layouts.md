@@ -37,7 +37,7 @@ var ToDo = Marionette.LayoutView.extend({
 });
 
 
-var TodoList = Marionette.CompositeView.extend({  
+var TodoList = Marionette.CompositeView.extend({
   el: '#app-hook',
   template: require('./templates/todolist.html'),
 
@@ -110,7 +110,7 @@ var TodoView = require('./views/layout');
 var initialData = {
   items: [
     {assignee: 'Scott', text: 'Write a book about Marionette'},
-    {assignee: 'Andrew': text: 'Do some coding'}
+    {assignee: 'Andrew', text: 'Do some coding'}
   ]
 };
 
@@ -240,7 +240,7 @@ var Layout = Marionette.LayoutView.extend({
   initialize: function() {
     this.collection = new Backbone.Collection([
       {assignee: 'Scott', text: 'Write a book about Marionette'},
-      {assignee: 'Andrew': text: 'Do some coding'}
+      {assignee: 'Andrew', text: 'Do some coding'}
     ]);
     this.model = new ToDoModel();
   },
