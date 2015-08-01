@@ -31,3 +31,191 @@ Marionette aims to solve this problem by taking lessons from elsewhere in the
 application development world - desktop and mobile apps. By splitting data
 storage, rendering, and handling user-input, it becomes easier to reason about
 the expected states of the application and to extend it.
+
+
+## Marionette Views
+
+To structure the data on your page, Marionette requires you to split up the
+logical structure into different views. Each view takes a template which it can
+render (transform into HTML) and display. Your view will then watch this section
+of your application for user input, providing the hooks you need to react to
+user actions.
+
+Let's start by building a simple view with the following template which we'll
+call `mytemplate.html`:
+
+```html
+<div class="mytext">Some text to render</div>
+<input class="myinput" />
+<button class="mybutton" type="button">Click Me</button>
+```
+
+Now that we have the template, we'll create a view to draw it:
+
+```javascript
+var Marionette = require('backbone.marionette');
+
+var MyView = Marionette.LayoutView.extend({
+  template: require('mytemplate.html')
+});
+
+view = new MyView();
+view.render();
+```
+
+This is among the simplest views we could build - it simply renders the HTML
+displayed and (with some extra code) will attach it to our page. We have a
+button on display, let's do something when it gets clicked:
+
+```javascript
+var Marionette = require('backbone.marionette');
+
+var MyView = Marionette.LayoutView.extend({
+  template: require('mytemplate.html'),
+
+  events: {
+    'click .mybutton': 'alertBox'
+  },
+
+  alertBox: function() {
+    alert('Button Clicked');
+  }
+});
+
+view = new MyView();
+view.render();
+```
+
+Now, whenever we click our button, we'll get an alert box. This is handled
+through the [`events` object][events]. Put simply, the events object maps a
+combination of a DOM event (e.g. click, keyup) with a jQuery selector
+(`.mtbutton`) to a method to call on the view (`alertBox`). We can do something
+a little more complex like so:
+
+```javascript
+var Marionette = require('backbone.marionette');
+
+var MyView = Marionette.LayoutView.extend({
+  template: require('mytemplate.html'),
+
+  events: {
+    'keyup .myinput': 'changeDiv'
+  },
+
+  changeDiv: function() {
+    var text = this.$el.find('.myinput').val();
+    this.$el.find('.mytext').text(text);
+  }
+});
+
+view = new MyView();
+view.render();
+```
+
+Now, whenever we modify the input, the contents of the `div` tag will change to
+reflect it.
+
+You might find yourself asking why we'll go to all these lengths to do something
+we could do in 2 lines of jQuery. We're just using jQuery anyway, aren't we?
+Let's do something a little more complex:
+
+```javascript
+var Marionette = require('backbone.marionette');
+
+var MyView = Marionette.LayoutView.extend({
+  template: require('mytemplate.html'),
+
+  ui: {
+    content: '.mytext',
+    input: '.myinput',
+    save: '.mybutton'
+  },
+
+  events: {
+    'click @ui.save': 'changeDiv'
+  },
+
+  changeDiv: function() {
+    var text = this.ui.input.val();
+    this.ui.content.text(text);
+  }
+});
+
+view = new MyView();
+view.render();
+```
+
+By using the `ui` object we can make the code a little easier to read and a lot
+less brittle - changing the underlying template only requires us to update the
+`ui` object with the new selectors. We're still just fiddling round the edges
+though. Let's take a more complex example. What happens if the data we're
+entering and how it needs to be handled are on completely different parts of the
+application? In fact, there's no reason for them to be aware of each other in
+the system.
+
+### Using Models to share data
+
+We can use a Backbone Model to store data changes and share them between
+different views in a structured way. Assuming we have two views that share a
+model instance, actions on one view can affect another.
+
+We'll start with the view being affected, with the template `output.html`:
+
+```html
+<div class="mytext"><%- mytext %></div>
+```
+
+```javascript
+var Marionette = require('backbone.marionette');
+
+var Output = Marionette.LayoutView.extend({
+  template: require('./output.html'),
+
+  modelEvents: {
+    'change:mytext': 'render'
+  }
+});
+
+module.exports = Output;
+```
+
+Because this view is so simple, we'll just completely redraw the template
+whenever the underlying data changes.
+
+The view where our user enters data with the template `input.html`:
+
+```html
+<input class="myinput" />
+<button class="mybutton">Click Me</button>
+```
+
+```javascript
+var Marionette = require('backbone.marionette');
+
+var Input = Marionette.LayoutView.extend({
+  template: require('./input.html'),
+
+  ui: {
+    input: '.myinput',
+    button: '.mybutton'
+  },
+
+  events: {
+    'click @ui.button': 'updateModel'
+  },
+
+  updateModel: function() {
+    var text = this.ui.input.val();
+    this.model.update({
+      mytext: text
+    });
+  }
+});
+
+module.exports = Input;
+```
+
+At the top-level, all we need to do is attach the same model to both views and
+they can then both change and listen to it.
+
+[events]: ../messaging/README.md
