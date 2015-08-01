@@ -218,4 +218,49 @@ module.exports = Input;
 At the top-level, all we need to do is attach the same model to both views and
 they can then both change and listen to it.
 
+## Binding to Models
+
+The above is an example of binding views to models. This is a key aspect of
+building Marionette applications, especially those with dynamic data.
+
+To bind a view to a model, simply pass it in when you create a new instance of
+the view:
+
+```javascript
+var MyView = require('./myview');
+
+var view = new MyView({
+  model: new Backbone.Model()
+});
+```
+
+Once we have a model bound to our view, we can access it from `this.model` and
+listen to events on the model. The official [Backbone documentation][backbone]
+contains the full list of events, and what they apply to.
+
+### Listening to Model events
+
+If we want our view to listen to events on its attached model, simply bind it
+in the `modelEvents` object like so:
+
+```javascript
+var MyView = Marionette.LayoutView.extend({
+  template: require('./mytemplate.html'),
+
+  modelEvents: {
+    'change': 'changeAnything',
+    'change:myfield': 'changeAField'
+  },
+
+  changeAnything: function(model, options) {
+    alert('Triggered on any field change');
+  },
+
+  changeAField: function(model, value, options) {
+    alert('Triggered because myfield changed - ' + value);
+  }
+});
+```
+
+[backbone]: http://backbonejs.org/#Events-catalog
 [events]: ../messaging/README.md
