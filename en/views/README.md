@@ -1,1 +1,33 @@
-# Connecting Data to Your Views
+# Views and Templates
+
+In the web, the user interacts with your application using their web browser.
+The web browser displays your page by rendering the HTML your server sends it.
+It can also, crucially, render HTML that you generate inside the browser itself
+using JavaScript. This is what allows us to build dynamic applications (like
+Google Docs, Trello, and Slack) inside the web browser.
+
+Early web browsers weren't very good at executing JavaScript and, as a result,
+early web developers didn't write much JavaScript, preferring to do all the
+processing and HTML generation on the server. Over time, with the development of
+complex client-side applications like Gmail, and the improvement of JavaScript
+engines in Chrome and Firefox, more and more processing and data rendering could
+be moved into the user's browser.
+
+You've probably heard of jQuery - the first popular library for manipulating
+the HTML in your browser based on user input. Even today, jQuery is used by
+many sites to handle simple, and complex, HTML manipulation. Marionette itself
+uses jQuery to handle the low-level details of rendering your data.
+
+Developers used the simpler syntax offered by jQuery and began building
+extremely complex web applications that would listen to user events, interact
+with web servers, and render the page based on the outcome. However, over time
+this code would become more and more difficult to manage. Developers would embed
+application state inside the page itself which, as the system grew more complex,
+would become harder to reason about. If multiple sources were acting on a part
+of a page, what would be the outcome of the new function we're adding? What if
+we didn't expect certain data to exist in the HTML elements we're acting on?
+
+Marionette aims to solve this problem by taking lessons from elsewhere in the
+application development world - desktop and mobile apps. By splitting data
+storage, rendering, and handling user-input, it becomes easier to reason about
+the expected states of the application and to extend it.

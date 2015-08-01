@@ -15,7 +15,7 @@
   * [Multiple Application Starters](application/multiple_apps.md)
 * [Implementing Routing](approuter/README.md)
   * [Attaching Controllers](approuter/attach_controllers.md)
-* [Connecting Data to Your Views](views/README.md)
+* [Views and Templates](views/README.md)
 * [Handling Data Latency](data_latency/README.md)
 * [Dealing with Complex Persisted Data](persisted_data/README.md)
 * [Nesting Your Views](layoutview/README.md)
