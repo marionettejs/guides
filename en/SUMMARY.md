@@ -14,6 +14,7 @@
 * [Views and Templates](views/README.md)
   * [Lists of Data](views/collections.md)
   * [Structuring your App](views/layouts.md)
+  * [Events and Triggers](views/events.md)
 * [Creating an Application](application/README.md)
   * [Integrating with Routing](application/routing.md)
   * [Multiple Application Starters](application/multiple_apps.md)
