@@ -117,7 +117,13 @@ reflect it.
 
 You might find yourself asking why we'll go to all these lengths to do something
 we could do in 2 lines of jQuery. We're just using jQuery anyway, aren't we?
-Let's do something a little more complex:
+
+
+### Declaring your UI
+
+Before we move on, we'll have a quick look at how to make our jQuery references
+a little cleaner. Marionette views can contain an object called `ui` that lets
+us name jQuery selectors. Let's look at a short example of how this works:
 
 ```javascript
 var Marionette = require('backbone.marionette');
@@ -147,17 +153,18 @@ view.render();
 
 By using the `ui` object we can make the code a little easier to read and a lot
 less brittle - changing the underlying template only requires us to update the
-`ui` object with the new selectors. We're still just fiddling round the edges
-though. Let's take a more complex example. What happens if the data we're
-entering and how it needs to be handled are on completely different parts of the
-application? In fact, there's no reason for them to be aware of each other in
-the system.
+`ui` object with the new selectors. Another advantage to using `ui` references
+over raw jQuery selectors is that they get stored as references - we can look up
+the same references over and over and jQuery will only search the DOM once.
 
 ### Using Models to share data
 
-We can use a Backbone Model to store data changes and share them between
-different views in a structured way. Assuming we have two views that share a
-model instance, actions on one view can affect another.
+What happens if the data we're entering and how it needs to be handled are on
+completely different parts of the application? There's no reason for  them to be
+aware of each other in the system. We can use a Backbone Model to store data
+changes and share them between different views in a structured way. Assuming we
+have two views that share a model instance, actions on one view can affect
+another.
 
 We'll start with the view being affected, with the template `output.html`:
 
