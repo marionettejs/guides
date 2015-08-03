@@ -72,12 +72,9 @@ views. The full list of events can be found in the
 (which is what Marionette listens to internally). Let's see an example:
 
 ```javascript
-var Table = Marionette.CollectionView.extend({
-  tagName: 'table',
-  template: require('table.html'),
-
-  childView: Row,
-  childViewContainer: 'tbody',
+var List = Marionette.CollectionView.extend({
+  tagName: 'ul',
+  childView: Item,
 
   collectionEvents: {
     add: 'itemAdded'
@@ -206,8 +203,42 @@ var view = new Table({
 view.render();
 ```
 
-And that's it! Our table now has access to the `total` field in the model! Our
-CompositeView can now listen to both `collectionEvents` and `modelEvents`.
+And that's it, our table now has access to the `total` field in the model!
+
+
+### Events
+
+Our CompositeView can now listen to both `collectionEvents` and `modelEvents` at
+the same time. One good use for this is a report table with a summary that is
+calculated and fetched separately:
+
+```javascript
+var Table = Marionette.CompositeView.extend({
+  tagName: 'table',
+  template: require('table.html'),
+
+  childView: Row,
+  childViewContainer: 'tbody',
+
+  modelEvents: {
+    sync: 'render'
+  },
+
+  collectionEvents: {
+    update: 'checkStatus'
+  },
+
+  checkStatus: function(collection) {
+    collection.each(function(model) {
+      // Do something
+    });
+  }
+});
+```
+
+With this example, when our model is fetched from the server, we'll re-render
+the table. When our collection is modified, we run another handler that, in this
+case, does some form of checking/modification for the collection.
 
 
 [backbone]: http://backbonejs.org/#Events-catalog
