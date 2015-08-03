@@ -63,6 +63,36 @@ collection.add({
 The `CollectionView` will recognize the item has been added and inject the item
 into the HTML template at the right location.
 
+
+### Events on Collections
+
+Just like we can bind `modelEvents` we can also bind `collectionEvents` to our
+views. The full list of events can be found in the
+[Backbone documentation][backbone]. This includes events for `add` and `remove`
+(which is what Marionette listens to internally). Let's see an example:
+
+```javascript
+var Table = Marionette.CollectionView.extend({
+  tagName: 'table',
+  template: require('table.html'),
+
+  childView: Row,
+  childViewContainer: 'tbody',
+
+  collectionEvents: {
+    add: 'itemAdded'
+  },
+
+  itemAdded: function(collection) {
+    alert('New item added');
+  }
+});
+```
+
+Now, whenever an item gets added, no matter how, an alert box will be displayed
+for each one.
+
+
 ## Lists inside Templates
 
 You'll notice the `CollectionView` doesn't define its own template. This makes
@@ -130,6 +160,7 @@ view.render();
 Adding and removing items works exactly as you'd expect - the new views are
 injected at the correct locations in the template.
 
+
 ## Binding Models
 
 The `CompositeView` has another advantage over `CollectionView` - it can take
@@ -175,4 +206,8 @@ var view = new Table({
 view.render();
 ```
 
-And that's it! Our table now has access to the `total` field in the model!
+And that's it! Our table now has access to the `total` field in the model! Our
+CompositeView can now listen to both `collectionEvents` and `modelEvents`.
+
+
+[backbone]: http://backbonejs.org/#Events-catalog

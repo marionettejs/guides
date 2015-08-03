@@ -238,6 +238,7 @@ Once we have a model bound to our view, we can access it from `this.model` and
 listen to events on the model. The official [Backbone documentation][backbone]
 contains the full list of events, and what they apply to.
 
+
 ### Listening to Model events
 
 If we want our view to listen to events on its attached model, simply bind it
@@ -249,18 +250,58 @@ var MyView = Marionette.LayoutView.extend({
 
   modelEvents: {
     'change': 'changeAnything',
-    'change:myfield': 'changeAField'
+    'change:myfield': 'changeSpecificField'
   },
 
   changeAnything: function(model, options) {
     alert('Triggered on any field change');
   },
 
-  changeAField: function(model, value, options) {
+  changeSpecificField: function(model, value, options) {
     alert('Triggered because myfield changed - ' + value);
   }
 });
 ```
+
+
+### Listening to custom events
+
+If the built-in model events aren't sufficient, it's also possible to set and
+trigger custom events. For example, `Backbone.Model` only defines a `sync` event
+but no special event to tell us what triggered the sync e.g. `fetch()` or
+`save()`. Let's imagine we want to execute some custom code after a `save` such
+as updating our collection:
+
+```javascript
+var MyView = Marionette.LayoutView.extend({
+  template: require('mytemplate.html'),
+
+  modelEvents: {
+    save: 'afterSave'
+  },
+
+  afterSave: function(model, options) {
+    alert('Model was saved');
+  },
+
+  onButtonClicked: function() {
+    var model = this.model;
+    model.save({
+      success: function() {
+        model.trigger('save', model, {});
+      }
+    });
+  }
+});
+```
+
+Now, whenever that event is fired by the model, we can listen to the save event
+and act on it from whichever views are bound to the model. While this works,
+this ad-hoc method for triggering model events only works for one-off sections
+of your application. If you want to standardize this behavior across your app's
+models then we would recommend you provide a custom method or extend the model's
+`save()` method (and/or any others).
+
 
 [backbone]: http://backbonejs.org/#Events-catalog
 [events]: ../messaging/README.md
