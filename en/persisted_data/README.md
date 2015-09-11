@@ -69,7 +69,133 @@ note.set({
 ```
 
 Besides brevity, there's a very good reason we'd want to update multiple fields
-at once, as we'll see later.
+at once, as we'll get to later.
+
+There's no reason we have to stick to the fields defined by defaults (we don't
+even need to define them), so we can add some ad-hoc data:
+
+```javascript
+note.set('reminder', '2015-09-04 11:01:00');
+```
+
+### Server synchronization
+
+This is all well and good but it still takes us no closer to pushing and pulling
+data to a server. First, we'll need to define a pretend server. Let's give it
+the URL `http://example.com/note/1` which, when we GET it, returns:
+
+```javascript
+{
+  "id": 1,
+  "title": "My note",
+  "content": "Some content saved online",
+  "timestamp": "2015-09-02 11:01:02",
+  "reminder": null
+}
+```
+
+First, we'll define a new type of Note:
+
+```javascript
+var Note = Backbone.Model.extend({
+  urlRoot: 'http://example.com/note/'
+});
+
+var note = new Note({
+  id: 1
+});
+note.fetch();
+```
+
+The `Model.fetch` method knows how to construct a URL from its `urlRoot` and
+`id` properties - namely appending `id` to `urlRoot`. Like most web calls in
+JavaScript, `fetch` is asynchronous - execution will continue before the web
+request completes.
+
+If we wanted to perform an action on the data once the fetch method returns, we
+can attach a `success` callback, as in jQuery:
+
+```javascript
+note.fetch({
+  success: function(response, model) {
+    // Do something
+  }
+});
+```
+
+When we're done modifying our data and want to save it, we'll call
+`Model.save()` and Backbone will save the data back to the server:
+
+```javascript
+note.set('title', 'New title');
+note.save();
+```
+
+We could also modify data and save in one call:
+
+```javascript
+note.save({
+  title: 'New title'
+});
+```
+
+Again, like fetch, we can use the success callback to execute based on the
+result of the call:
+
+```javascript
+note.save(
+  {
+    title: 'New title'
+  },
+  {
+    success: function(response, model) {
+    // Do something
+  }
+);
+```
+
+This dependency on the `success` and `error` callbacks doesn't help us when our
+model is attached to multiple [views][views] - what happens if one view updates
+the model but another one needs to be changed? Do both views need to know about
+each other? Let's find out.
+
+
+### Events
+
+Models use events to signal that something has happened that another object may
+be interested in. For example, a model can signal that fields have changed, it
+has successfully saved its data (or failed), or that it has fetched a new set
+of data from the server. These events can then be listened to by
+[views][view-event], or any other object that knows about the model. Using this,
+our models can affect multiple parts of an application without needing to be
+explicitly told about them. Let's look at some examples:
+
+```javascript
+note.set('title', 'New title');
+// Fires the 'change' and 'change:title' events
+
+note.set('content', 'New content');
+// Fires another 'change' event and 'change:content' event
+
+note.set({
+  content: 'Newer content',
+  title: 'Newer title'
+});
+// Fires only one 'change' event, 'change:content', and 'change:title'
+
+note.save();
+// Fires the 'request' event, then either 'sync' or 'error' depending on the
+// server response
+
+note.fetch();
+// Like save, fires `request`, then `sync` or `error` depending on the response
+```
+
+A full, up-to-date, list of events can always be found on the
+[Backbone documentation][backbone-event], with a description of when each event
+fires. As we can see in the example, `change` is fired every time we
+successfully `set` a field - if we want to only fire a single `change` event,
+we must pass an object into `set` with all the fields we want to update.
 
 
 ## Collections
@@ -77,3 +203,6 @@ at once, as we'll see later.
 
 [backbone-model]: http://backbonejs.org/#Model
 [backbone-collection]: http://backbonejs.org/#Collection
+[backbone-event]: http://backbonejs.org/#Event-catalog
+[views]: ../views/README.md
+[view-event]: ../views/events.md
