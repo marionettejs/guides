@@ -198,11 +198,45 @@ successfully `set` a field - if we want to only fire a single `change` event,
 we must pass an object into `set` with all the fields we want to update.
 
 
+#### Listening to Events
+
+For these events to be useful, we need to attach listeners that act when the
+event is fired. When the title is updated, let's listen for it like so:
+
+```javascript
+var titleUpdated = function(model, value) {
+  console.log('title is now ' + value);
+};
+
+note.on('change:title', titleUpdated);
+note.set('title', 'Changed Title');
+// Outputs 'title is now Changed Title'
+```
+
+We can also listen to events from our [views][view-event] by using the
+`modelEvents` attribute. When defining our view:
+
+```javascript
+var NoteView = Marionette.LayoutView.extend({
+  modelEvents: {
+    'change:title': 'updateTitle'
+  },
+
+  updateTitle: function(model, value, options) {
+    console.log('title for NoteView is now ' + value);
+  }
+});
+```
+
+This will trigger the `updateTitle` method on our `NoteView` whenever `title`
+changes.
+
+
 ## Collections
 
 
 [backbone-model]: http://backbonejs.org/#Model
 [backbone-collection]: http://backbonejs.org/#Collection
-[backbone-event]: http://backbonejs.org/#Event-catalog
+[backbone-event]: http://backbonejs.org/#Events-catalog
 [views]: ../views/README.md
 [view-event]: ../views/events.md
