@@ -231,6 +231,53 @@ var NoteView = Marionette.LayoutView.extend({
 This will trigger the `updateTitle` method on our `NoteView` whenever `title`
 changes.
 
+#### Custom Events
+
+When you start building your apps, you'll notice that Backbone doesn't always
+give you the events you need. As a common example, there's no way to distinguish
+between a successful save and a successful data pull - `sync` covers both cases.
+
+Luckily, we can fire custom events on models, and Marionette views are capable
+of binding to them. Let's see an example of this now:
+
+
+```javascript
+var MyView = Marionette.LayoutView.extend({
+  modelEvents: {
+    saved: 'saveComplete'
+  },
+
+  triggers: {
+    'click .save-button': 'save:note'
+  },
+
+  onSaveNote: function() {
+    this.model.save(
+      {
+        content: 'New content',
+        title: 'New title'
+      },
+      {
+        success: function() {
+          note.trigger('save', note);
+        }
+      }
+    );
+  },
+
+  saveComplete: function(model) {
+    console.log('Note saved');
+  }
+});
+```
+
+Now, when `save` succeeds, our `saveComplete` method gets called and
+`Note saved` makes it to the log. Whilst useful, this example has a flaw in that
+only `NoteView` will trigger the `saved` event, and so it's not much better than
+just executing the code in `success` directly. This could be acceptable if our
+`save` is only called in this view - other views can still happily listen to the
+`saved` event, even though they don't fire it.
+
 
 ## Collections
 
