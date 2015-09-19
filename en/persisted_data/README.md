@@ -281,6 +281,106 @@ just executing the code in `success` directly. This could be acceptable if our
 
 ## Collections
 
+Managing a single model is good, and we can do a lot of interesting things with
+just this knowledge. When it comes to building applications, we will normally
+operate on collections of data to render lists, draw charts, and otherwise
+aggregate data.
+
+The `Backbone.Collection` class is used to model and act on multiple models at
+the same time. Let's take our note example and see how we could build up a list
+of notes that we'd like to draw later:
+
+```javascript
+var NoteCollection = Backbone.Collection.extend({
+});
+
+var noteList = new NoteCollection([
+  new Note({title: 'Note1', content: 'Content1'}),
+  new Note({title: 'Note2', content: 'Content2'})
+]);
+```
+
+This will store the list of notes. After creating our collection, we can add new
+notes using the `add` method, like so:
+
+```javascript
+noteList.add(new Note({title: 'Note3', content: 'Content3'}));
+```
+
+Since we only have a single type in our list, let's set this constraint in the
+definition:
+
+```javascript
+var NoteCollection = Backbone.Collection.extend({
+  model: Note
+});
+
+var noteList = new NoteCollection([
+  {title: 'Note1', content: 'Content1'},
+  {title: 'Note2', content: 'Content2'}
+]);
+
+noteList.add({title: 'Note3', content: 'Content3'});
+```
+
+Now Backbone will convert our raw JavaScript objects into `Note` objects, both
+on creation and when adding new objects. It will also enforce this:
+
+```javascript
+var NotANote = Backbone.Model.extend();
+
+noteList.add(new NotANote({something: 'Some Value'}));
+// ERROR - This is not a Note object
+```
+
+
+### Synchronizing data
+
+Collections are used to pull lists of data from our server and build an
+abstraction we can operate on. Assuming that our note-taking app has a server
+endpoint `/note/` that returns a JSON list in the form:
+
+```javascript
+[
+  {
+    "content": "Note Content",
+    "title": "Note title",
+    "reminder": null,
+    "timestamp": "2015-09-01 12:01:00",
+    "id": 1
+  },
+  {
+    "content": "Another note with some content",
+    "title": "Note title2",
+    "reminder": "2015-09-02 09:00:00",
+    "timestamp": "2015-09-01 12:51:00",
+    "id": 2
+  },
+  {
+    "content": "Yet another note",
+    "title": "Note title 3",
+    "reminder": null,
+    "timestamp": "2015-02-01 12:01:00",
+    "id": 3
+  }
+]
+```
+
+Now let's define our collection that references the URL endpoint:
+
+```javascript
+var NoteCollection = Backbone.Collection.extend({
+  url: '/note/',
+  model: Note
+});
+
+var noteList = new NoteCollection();
+noteList.fetch();
+```
+
+Like in `Model`, we use the `fetch` method to pull our data from the server and
+insert it into our collection.
+
 
 [backbone-model]: http://backbonejs.org/#Model
 [backbone-collection]: http://backbonejs.org/#Collection
