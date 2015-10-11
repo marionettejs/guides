@@ -140,6 +140,9 @@ This style is used throughout Marionette to allow developers to bind hooks
 before and after common actions occur. Some of the most common examples are the
 render and show hooks: `before:render`, `render`, `before:show`, `show`.
 
+
+### Built-in Triggers
+
 We can listen to these standard triggers just like any other:
 
 ```javascript
@@ -155,3 +158,5 @@ var MyView = Marionette.LayoutView.extend({
   }
 });
 ```
+
+The next section will cover the built in triggers in more detail.
