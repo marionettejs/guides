@@ -98,6 +98,9 @@ Marionette to work out which methods to call. As you can see, `set:title` will
 call `onSetTitle` when triggered and `save:form` will call `onSaveForm` when
 triggered.
 
+
+### Manually Firing Triggers
+
 We can also manually fire triggers. A common pattern is to use a `before:`
 trigger to alert listeners that an action is about to be performed. Take our
 save example:
