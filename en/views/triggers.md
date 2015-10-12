@@ -71,6 +71,11 @@ this reference to find the list of views and the triggers they can each fire.
 
 ### `add:child` and `before:add:child`
 
+This trigger fires whenever a child view gets rendered and attached to the
+`CollectionView`. We will get an argument referencing the child that has just
+been added. This can be useful if you need to do some extra work on the child
+view where you need information from the parent.
+
 
 #### Example
 
@@ -86,8 +91,8 @@ this reference to find the list of views and the triggers they can each fire.
 This trigger fires once our view gets attached to the actual DOM i.e. once the
 view is completely rendered and viewable in the browser window. This is usually
 used to perform actions that require the view to be completely rendered and
-visible - for instance displaying a modal. We also use this as a safe point
-where we know that the view is finished and active for the user.
+visible - for instance displaying a modal or datepicker widget. We also use this
+as a safe point where we know that the view is finished and active for the user.
 
 
 #### Example
@@ -123,10 +128,30 @@ var ModalLayout = Marionette.Layout.extend({
 ### `destroy` and `before:destroy`
 
 Fired by the region manager to perform any extra clean up on the view after it
-has been destroyed.
+has been destroyed. This can be things like executing extra JS on plugins like
+modals and datepickers.
 
 
 #### Example
+
+In this example, we'll use the `before:destroy` trigger to close a modal before
+it gets removed from the DOM. We're using something similar to
+[Bootstrap's modal JavaScript][bootstrap-modal].
+
+```javascript
+var ModalView = Marionette.LayoutView.extend({
+  ui: {
+    wrapper: '.modal-wrapper'
+  },
+
+  onBeforeDestroy: function() {
+    this.ui.wrapper.modal('hide');
+  }
+});
+```
+
+As an aside, this wouldn't work in Bootstrap as the `modal` method returns
+immediately, causing the view to be destroyed before the modal can be hidden.
 
 
 #### On Views
@@ -232,6 +257,10 @@ var TableView = Marionette.CompositeView.extend({
 
 ### `render:collection` and `before:render:collection`
 
+Fired after the collection has been rendered and attached to the view. This will
+only fire if the view's collection is _not_ empty. In other words, if the view
+attached to `emptyView` is displayed, this trigger won't be fired.
+
 
 #### Example
 
@@ -239,6 +268,22 @@ var TableView = Marionette.CompositeView.extend({
 #### On Views
 
   - `CollectionView`
+  - `CompositeView`
+
+
+### `render:template` and `before:render:template`
+
+The `render:template` trigger is fired when the wrapper template for a
+`CompositeView` is rendered but before the collection items have started
+rendering - `childViewContainer` will be empty while this trigger is first
+fired.
+
+
+#### Example
+
+
+#### On Views
+
   - `CompositeView`
 
 
@@ -257,6 +302,10 @@ Gets fired whenever we reorder the underlying collection attached to a view.
 
 
 ### `remove:child` and `before:remove:child`
+
+The `remove:child` trigger gets fired when a collection item is removed,
+typically when `this.collection.remove(id)` is called. Unlike the collection
+event, this fires after the view has been removed from the DOM.
 
 
 #### Example
@@ -305,6 +354,22 @@ regionManager.get('layout').show(new MyLayout({collection: todoList}));
   - `LayoutView`
   - `CollectionView`
   - `CompositeView`
+
+
+## List of Views and their Triggers
+
+&nbsp;      |  `View`  | `ItemView` | `LayoutView` | `CollectionView` | `CompositeView`
+------------|:--------:|:----------:|:------------:|:----------------:|:--------------:
+`add:child` |          |            |              |     &#10003;     |    &#10003;
+`attach`    |  &#10003;|  &#10003;  |    &#10003;  |     &#10003;     |    &#10003;
+`destroy`   | &#10003; |  &#10003;  |    &#10003;  |     &#10003;     |    &#10003;
+`dom:refresh` | &#10003; | &#10003; |    &#10003;  |     &#10003;     |    &#10003;
+`render`    |  &#10003;|  &#10003;  |    &#10003;  |     &#10003;     |    &#10003;
+`render:collection` |  |            |              |     &#10003;     |    &#10003;
+`render:template` |    |            |              |                  |    &#10003;
+`reorder`   |          |            |              |     &#10003;     |    &#10003;
+`remove:child` |       |            |              |     &#10003;     |    &#10003;
+`show`      |  &#10003;|  &#10003;  |    &#10003;  |     &#10003;     |    &#10003;
 
 
 [bootstrap-modal]: http://getbootstrap.com/javascript/#modals-methods
