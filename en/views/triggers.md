@@ -69,6 +69,18 @@ If you just want to know what triggers a view can fire, skip to the bottom of
 this reference to find the list of views and the triggers they can each fire.
 
 
+### `add:child` and `before:add:child`
+
+
+#### Example
+
+
+#### On Views
+
+  - `CollectionView`
+  - `CompositeView`
+
+
 ### `attach` and `before:attach`
 
 This trigger fires once our view gets attached to the actual DOM i.e. once the
@@ -78,11 +90,190 @@ visible - for instance displaying a modal. We also use this as a safe point
 where we know that the view is finished and active for the user.
 
 
+#### Example
+
+This example uses [Bootstrap's Modal JavaScript][bootstrap-modal] which requires
+the HTML to be attached to the DOM to work.
+
+```javascript
+var ModalLayout = Marionette.Layout.extend({
+  ui: {
+    wrapper: '.modal-wrapper'
+  },
+
+  /** Use Bootstrap's modal JavaScript. This assumes that the JS files are
+  *   loaded and will work.
+  */
+  onAttach: function() {
+    this.ui.wrapper.modal('show');
+  }
+});
+```
+
+
+#### On Views
+
+  - `View`
+  - `ItemView`
+  - `LayoutView`
+  - `CollectionView`
+  - `CompositeView`
+
+
+### `destroy` and `before:destroy`
+
+Fired by the region manager to perform any extra clean up on the view after it
+has been destroyed.
+
+
+#### Example
+
+
+#### On Views
+
+  - `View`
+  - `ItemView`
+  - `LayoutView`
+  - `CollectionView`
+  - `CompositeView`
+
+
+### `dom:refresh`
+
+Only fired when a view is re-rendered. This does not get fired on the first
+render, only on subsequent rendering.
+
+
+#### Example
+
+This example demonstrates when the `dom:refresh` trigger is fired.
+
+```javascript
+var MyLayout = Marionette.LayoutView.extend({
+  onDomRefresh: function() {
+    console.log('dom:refresh');
+  },
+
+  onRender: function() {
+    console.log('render');
+  },
+
+  onShow: function() {
+    console.log('show');
+  }
+});
+
+var view = new MyLayout();
+
+regionManager.get('layout').show(view);
+// 'render'
+// 'show'
+
+view.render();
+
+// 'render'
+// 'dom:refresh'
+```
+
+
+#### On Views
+
+  - `View`
+  - `ItemView`
+  - `LayoutView`
+  - `CollectionView`
+  - `CompositeView`
+
+
+### `render` and `before:render`
+
+The `render` event fires when the view's HTML template has been rendered
+(the string has been built) but before it gets attached to the browser DOM. We
+commonly use this hook to operate on the HTML but before the user can see it.
+
+
+#### Example
+
+A common example is to check for data and add/remove classes on the view's
+element every time it gets rendered. This example checks to see if a table row
+was selected for a form element and attaches the appropriate class.
+
+```javascript
+var RowView = Marionette.LayoutView.extend({
+  tagName: 'tr',
+
+  onRender: function() {
+    if (this.model.get('selected')) {
+      this.$el.addClass('selected');
+    }
+    else {
+      this.$el.removeClass('selected');
+    }
+  }
+});
+
+
+var TableView = Marionette.CompositeView.extend({
+  tagName: 'table',
+
+  childView: RowView,
+  childViewContainer: 'tbody'
+});
+```
+
+
+#### On Views
+
+  - `ItemView`
+  - `LayoutView`
+  - `CollectionView`
+  - `CompositeView`
+
+
+### `render:collection` and `before:render:collection`
+
+
+#### Example
+
+
+#### On Views
+
+  - `CollectionView`
+  - `CompositeView`
+
+
+### `reorder` and `before:reorder`
+
+Gets fired whenever we reorder the underlying collection attached to a view.
+
+
+#### Example
+
+
+#### On Views
+
+  - `CollectionView`
+  - `CompositeView`
+
+
+### `remove:child` and `before:remove:child`
+
+
+#### Example
+
+
+#### On Views
+
+  - `CollectionView`
+  - `CompositeView`
+
+
 ### `show` and `before:show`
 
 The `show` event fires when `region.show(view)` - or
 `layoutView.showChildView(view)` - is complete. We'll commonly use this trigger
 to build up our nested layout hierarchy and show a layout's sub-views.
+
 
 #### Example
 
@@ -109,7 +300,12 @@ regionManager.get('layout').show(new MyLayout({collection: todoList}));
 
 #### On views
 
-  * **All**
+  - `View`
+  - `ItemView`
+  - `LayoutView`
+  - `CollectionView`
+  - `CompositeView`
 
 
-[events]: (./events.md)
+[bootstrap-modal]: http://getbootstrap.com/javascript/#modals-methods
+[events]: ./events.md
