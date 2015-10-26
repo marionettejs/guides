@@ -34,9 +34,12 @@ Backbone.Marionette = require('backbone.marionette');
 When building our applications, we'll commonly use a `driver.js` file that will
 start by importing this `setup.js` file: `require('setup.js')`.
 
-When we want to compile our application, we'll use Browserify
-`browserify driver.js -o static_folder/app.js` where `static_folder` is the
-directory to the static directory that your web server provides.
+When we want to compile our application, we'll use Browserify:
+
+```browserify driver.js -t node-underscorify -o static_folder/app.js```
+
+where `static_folder` is the directory to the static directory that your web
+server provides.
 
 Now, in the `index.html` file, or base template (if you're using Django, Rails,
 etc.) place the following at the bottom of your `body` tag:
