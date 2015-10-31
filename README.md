@@ -9,11 +9,6 @@ It is built using [GitBook][gitbook], a tool for building books using Git and
 
 You can contribute to improve these guides on [GitHub][repo] by sending in a pull request with your changes.
 
-Anyone who contributes and gets their pull requests merged in is eligible to
-receive a FREE sticker (the [#1 reply](http://www.devbattles.com/en/sand/post-670-Top+20+replies+by+Programmers+when+their+programs+don%27t+work) by developers when their programs don't work).
-
-![sticker](sticker.png)
-
 ----
 
 [marionette]: http://marionettejs.com/

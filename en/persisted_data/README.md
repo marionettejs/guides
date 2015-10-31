@@ -1,197 +1,389 @@
-# Dealing with Complex Persisted Data
+# Handling persisted data
 
-If you are developing a Backbone / Marionette application, at some point you will very likely have to perform the following core operations:
+To do any interesting work, a web application usually needs to interact with a
+web server. Historically, this would have been managed by using jQuery's
+`$.ajax` function, and storing the result in a JavaScript object. As our
+applications grow in size, this starts to become more and more difficult to
+manage unless we introduce a structure.
 
-1. Fetch data from the server.
-2. Update your models with the server data.
-3. Render the updated models.
+Another drawback of this method is that updating our UI in response to data
+changes gets very complex very quickly. Take an application like Evernote -
+there are usually two versions of a note: the one in the list and the one you're
+currently editing. How do you easily keep both versions in sync? If we want to
+get an updated version of the note from our server, how can we easily make sure
+both versions are updated simultaneously?
 
-The complexity and difficulty of this process largely depends on how closely the format of your server data matches that of your view(s).  If it's a perfect match, then the process is relatively straightforward -- you instantiate a collection with the appropriate URL property, call Backbone's `fetch` method on the collection, and pass that collection to your view of choice, e.g.   
+Backbone gives us the [Model][backbone-model] and
+[Collection][backbone-collection] classes for just this purpose. In short, the
+Model represents a single object/resource/record with attributes that can be
+synchronized with a server. A Collection is simply a list of Models, with extra
+helper methods, that can also be synchronized with our server. With these two
+classes, it becomes very easy to simply list a Collection, change the individual
+Model instances, and have those changes simultaneously propagated across
+different sections of your application.
 
-**Server response.  Nicely formatted in a "JSON array of models," just like Backbone expects.**
-    
-    [
-		{
-			name: 'John Smith',
-			age: 30,
-			city: 'Los Angeles',
-            date: 07/15/2014
-		},
-		{
-			name: 'Bill Johnson',
-			age: 33,
-			city: 'San Francisco',
-            date: 07/05/2014
-		},
-		{
-			name: 'Ann Doe',
-			age: 35,
-			city: 'Boulder',
-            date: 07/01/2014
-		},
-	]
+Sound too easy? Let's look at how to make it all happen.
 
-**Collection, view, model, and templates.**
-	
-    MyModel = Backbone.Model.extend({
-    	urlRoot : '/api/data'
-    });
-   
-	MyCollection = Backbone.Collection.extend({
-		url : '/api/data',
-		model : MyModel
-	});
-    
-    MyItemView = Marionette.ItemView.extend({
-    	template : itemTemplate
-    });
-    
-    MyCompositeView = Marionette.CompositeView.extend({
-    	template : compositeTemplate,
-        className : 'table-content'
-        itemView : MyItemView
-    });
 
-	// compositeTemplate (written in Jade).
-	div.header-cell NAME
-	div.header-cell AGE
-    div.header-cell CITY
-    div.header-cell DATE
+## Models
 
-	// itemTemplate
-    div.body-cell #{name}
-    div.body-cell #{age}
-    div.body-cell #{city}
-    div.body-cell #{date}
+We'll start by looking at the `Backbone.Model` and how to use it. Let's create
+a simple note with a timestamp, content, and title.
 
-**Code to get the server data and display it in your view.**
-   
-    myCollection = new MyCollection();
-	myCollection.fetch();
-	myCompositeView = new MyCompositeView({ collection: myCollection });
-	// app is a Marionette application.  myRegion is a Marionette region.
-	app.myRegion.show(myCompositeView);
-   
-However, if your server data is a far cry from what Backbone and/or Marionette expects, or from what you'd like to show end users in your views, then the process becomes a bit more nuanced.  For example, suppose  that instead of getting a nice array of models with clean attributes in your response, your get something that looks more like this:
+```javascript
+var Note = Backbone.Model.extend({
+  defaults: {
+    timestamp: '',
+    content: '',
+    title: ''
+  }
+});
 
-**Server response.**
-	
-    {
-		data: 
-			
-			[
-				{
-					name: 'John Smith',
-					age: 30,
-					address: {
-                    	city: 'Los Angeles',
-                        state: 'CA'
-                    },
-                    date: 1318781876
-				},
-				{
-					name: 'Bill Johnson',
-					age: 33,
-					address: {
-                        city: 'San Francisco',
-                        state: 'CA'
-                   },
-                   date: 1318781876
-				},
-				{
-					name: 'Ann Doe',
-					age: 35,
-					address: {
-                        city: 'Boulder',
-                        state: 'CO'
-                    },
-                    date: 1318781876
-				},
-			],
-		
-		someOtherKey: 'someOtherValue'
-	}
-    
-Yikes.  Your array of models is now buried in an object under a "data" key, your "city" attribute is nested inside an "address" object, and your date is a Unix timestamp instead of a nicely formated "MM/DD/YY" string!  Given this data format, simply calling `fetch` won't work (if you do, you'll end up with only one "model" that has a "data" attribute and a blank view).  Instead, we need to use a few helper methods, Backbone's `parse` and Marionette's `serializeData`, to get our data where we want it to be.        
+var note = new Note({
+  timestamp: '2015-09-02 11:00:00',
+  content: "I'm writing a book!",
+  title: 'Doing something'
+});
+```
 
-Let's start with Backbone's `parse`.  Per the [documentation](http://backbonejs.org/#Collection-parse), Backbone's `parse` function is "called by Backbone whenever a collection's models are returned by the server in `fetch`."  It takes the server response as an argument, and by default just passes it on through.  Now this isn't very helpful on its own, but we can override `parse` to meet our needs.  In this case, we should modify `parse` like so:      
+Now we have our note, we can read its fields:
 
-	MyCollection = Backbone.Collection.extend({
-		// Custom parse function.
-		parse : function(response, options) {
-			return response.data;
-		}
+```javascript
+console.log(note.get('content'));
+// Doing something
+```
 
-	}); 
+If we have some new data to put in this note, we can update it like so:
 
-Here, we take the server response object, and return the value of the "data" key, which is array of models.  Backbone can now `set` the models properly.
+```javascript
+note.set('content', 'New content');
+```
 
-But our work isn't finished.  We still need to deal with the embedded "city" attribute and the "date" attribute.  For this task, Marionette's `serializeData` is ideally suited.  `serializeData` is similar to `parse` in that the default function is essentially a no-op that you need to override (technically it's not a no-op -- it performs a shallow clone of the models' attributes via Backbone's `toJSON` but that's effectively just passing the attributes as-is on to the view / template).  It takes no arguments, and returns an object with the attributes formatted for display in your view.  This is key -- `serializeData` doesn't actually affect your model attributes themselves, it just packages them up for presentation, which is what we want.  Our `serializeData` function might look something like the following:
+Or, if we wanted to update multiple fields at a time:
 
-**Our ItemView with the new `serializeData` function**
-    
-    MyItemView = Marionette.ItemView.extend({
-    	template : itemTemplate
-    	
-    	serializeData : function() {
-    		// Get the relevant model attributes.
-    		var addressObject = this.model.get('address');
-    		var unixDate = this.model.get('date');
-			
-            // Return an object for your template.
-    		return {
-    			name : this.model.get('name'),
-    			age : this.model.get('age'),
-    			city : addressObject.city,
-    			 // using moment.js library to format the date.
-                date : moment.unix(unixDate).format('MM/DD/YYYY')
-    		};
-    	}
-    });
+```javascript
+note.set({
+  content: 'New content',
+  title: 'Updated title too'
+});
+```
 
-**Nothing needs to change in our ItemView template**
-	
-    // itemTemplate
-    div.body-cell #{name}
-    div.body-cell #{age}
-    div.body-cell #{city}
-    div.body-cell #{date}
+Besides brevity, there's a very good reason we'd want to update multiple fields
+at once, as we'll get to later.
 
-Now you might be saying to yourself, "`parse` and `serializeData` seem to be doing similar things...what's the difference?  When should I use `parse` and when should I use `serializeData`?"  Good question.  You actually could have used `parse` to accomplish everything we did in the above example -- access the relevant JSON array of models *and* clean up the city and date attributes.  But there's a good reason why we didn't do it that way: separation of concerns.  `parse` affects your data structure -- whatever you return from `parse` will be used to set your model attributes.  Using `parse` to clean up the "city" and "date" attributes would therefore be modifying your data structure to fit your view.  Not only does this create a tight coupling, but it also creates a disparity between the models on the server and the models on the client, which in turn makes syncing between client and server all the more difficult.  Not good.  That's why we used `serializeData` to clean up the city and date attributes.  `seralizeData` does *not* affect the models themselves, it only affects how the models' attributes are prepared for the view.  Make as many adjustments as you wish, your data structure remains intact.
+There's no reason we have to stick to the fields defined by defaults (we don't
+even need to define them), so we can add some ad-hoc data:
 
-So in summary:
+```javascript
+note.set('reminder', '2015-09-04 11:01:00');
+```
 
-+ Use Backbone's `collection.parse` and `model.parse` to translate server responses into proper data structures for Backbone (objects for models and arrays of objects for collections).
-+ Use Marionette's `ItemView.serializeData` to modify Backbone model attributes for display in your views. 
+### Server synchronization
 
-Two additional things to keep in mind.  First, `parse` is both a model and a collection method and if you have parse defined for your collection and your model *both `parse` methods will be called anytime you return a collection of models from the server*.  Chances are you don't want both `model.parse` and `collection.parse` to be called whenever you get a collection back from the server, so you need to address this.  Fortunately, whenever a model is created as part of a collection, Backbone [passes a collection option to the model constructor](http://backbonejs.org/docs/backbone.html#section-117), which you can check for and accommodate accordingly:
-		
-		// Model parse function.
-		parse : function(response, options) {
-			// If model is part of a collection, just pass the response on through.
-			if (options.collection) {
-				return response;
-			}
+This is all well and good but it still takes us no closer to pushing and pulling
+data to a server. First, we'll need to define a pretend server. Let's give it
+the URL `http://example.com/note/1` which, when we GET it, returns:
 
-			// If model is on its own, execute your parse logic.
-			else {
-				return response.data
-			}
-		}
+```javascript
+{
+  "id": 1,
+  "title": "My note",
+  "content": "Some content saved online",
+  "timestamp": "2015-09-02 11:01:02",
+  "reminder": null
+}
+```
 
-Full example can be found in [this](http://stackoverflow.com/questions/18652437/backbone-not-parse-each-model-in-collection-after-fetch) stackoverflow answer.
+First, we'll define a new type of Note:
 
-Second, even though it's currently the default option in Marionette (there are plans to change it soon), you really shouldn't use `toJSON` to serialize data for your views.  This is due to the fact that `toJSON` is *also* used [to prep data for the server](http://backbonejs.org/#Model-toJSON), and chances are you don't want to override your server prep methods with your view prep methods.  Does that mean you have to write a `serializeData` function for every single view to keep things straight?  Fortunately not.  Just override Marionette's `serializeModel` and `serializeCollection` methods:     
+```javascript
+var Note = Backbone.Model.extend({
+  urlRoot: 'http://example.com/note/'
+});
 
-	Marionette.View.prototype.serializeModel = function(model) {
-	  model = model || this.model;
-	  return _.clone(model.attributes);
-	};
+var note = new Note({
+  id: 1
+});
+note.fetch();
+```
 
-	Marionette.ItemView.prototype.serializeCollection = function() {
-	  return collection.map(function(model) {
-	    return this.serializeModel(model);
-	  }, this);
-	};
+The `Model.fetch` method knows how to construct a URL from its `urlRoot` and
+`id` properties - namely appending `id` to `urlRoot`. Like most web calls in
+JavaScript, `fetch` is asynchronous - execution will continue before the web
+request completes.
 
-That's it for now.  Happy coding!
+If we wanted to perform an action on the data once the fetch method returns, we
+can attach a `success` callback, as in jQuery:
+
+```javascript
+note.fetch({
+  success: function(response, model) {
+    // Do something
+  }
+});
+```
+
+When we're done modifying our data and want to save it, we'll call
+`Model.save()` and Backbone will save the data back to the server:
+
+```javascript
+note.set('title', 'New title');
+note.save();
+```
+
+We could also modify data and save in one call:
+
+```javascript
+note.save({
+  title: 'New title'
+});
+```
+
+Again, like fetch, we can use the success callback to execute based on the
+result of the call:
+
+```javascript
+note.save(
+  {
+    title: 'New title'
+  },
+  {
+    success: function(response, model) {
+    // Do something
+  }
+);
+```
+
+This dependency on the `success` and `error` callbacks doesn't help us when our
+model is attached to multiple [views][views] - what happens if one view updates
+the model but another one needs to be changed? Do both views need to know about
+each other? Let's find out.
+
+
+### Events
+
+Models use events to signal that something has happened that another object may
+be interested in. For example, a model can signal that fields have changed, it
+has successfully saved its data (or failed), or that it has fetched a new set
+of data from the server. These events can then be listened to by
+[views][view-event], or any other object that knows about the model. Using this,
+our models can affect multiple parts of an application without needing to be
+explicitly told about them. Let's look at some examples:
+
+```javascript
+note.set('title', 'New title');
+// Fires the 'change' and 'change:title' events
+
+note.set('content', 'New content');
+// Fires another 'change' event and 'change:content' event
+
+note.set({
+  content: 'Newer content',
+  title: 'Newer title'
+});
+// Fires only one 'change' event, 'change:content', and 'change:title'
+
+note.save();
+// Fires the 'request' event, then either 'sync' or 'error' depending on the
+// server response
+
+note.fetch();
+// Like save, fires `request`, then `sync` or `error` depending on the response
+```
+
+A full, up-to-date, list of events can always be found on the
+[Backbone documentation][backbone-event], with a description of when each event
+fires. As we can see in the example, `change` is fired every time we
+successfully `set` a field - if we want to only fire a single `change` event,
+we must pass an object into `set` with all the fields we want to update.
+
+
+#### Listening to Events
+
+For these events to be useful, we need to attach listeners that act when the
+event is fired. When the title is updated, let's listen for it like so:
+
+```javascript
+var titleUpdated = function(model, value) {
+  console.log('title is now ' + value);
+};
+
+note.on('change:title', titleUpdated);
+note.set('title', 'Changed Title');
+// Outputs 'title is now Changed Title'
+```
+
+We can also listen to events from our [views][view-event] by using the
+`modelEvents` attribute. When defining our view:
+
+```javascript
+var NoteView = Marionette.LayoutView.extend({
+  modelEvents: {
+    'change:title': 'updateTitle'
+  },
+
+  updateTitle: function(model, value, options) {
+    console.log('title for NoteView is now ' + value);
+  }
+});
+```
+
+This will trigger the `updateTitle` method on our `NoteView` whenever `title`
+changes.
+
+#### Custom Events
+
+When you start building your apps, you'll notice that Backbone doesn't always
+give you the events you need. As a common example, there's no way to distinguish
+between a successful save and a successful data pull - `sync` covers both cases.
+
+Luckily, we can fire custom events on models, and Marionette views are capable
+of binding to them. Let's see an example of this now:
+
+
+```javascript
+var MyView = Marionette.LayoutView.extend({
+  modelEvents: {
+    saved: 'saveComplete'
+  },
+
+  triggers: {
+    'click .save-button': 'save:note'
+  },
+
+  onSaveNote: function() {
+    this.model.save(
+      {
+        content: 'New content',
+        title: 'New title'
+      },
+      {
+        success: function() {
+          note.trigger('save', note);
+        }
+      }
+    );
+  },
+
+  saveComplete: function(model) {
+    console.log('Note saved');
+  }
+});
+```
+
+Now, when `save` succeeds, our `saveComplete` method gets called and
+`Note saved` makes it to the log. Whilst useful, this example has a flaw in that
+only `NoteView` will trigger the `saved` event, and so it's not much better than
+just executing the code in `success` directly. This could be acceptable if our
+`save` is only called in this view - other views can still happily listen to the
+`saved` event, even though they don't fire it.
+
+
+## Collections
+
+Managing a single model is good, and we can do a lot of interesting things with
+just this knowledge. When it comes to building applications, we will normally
+operate on collections of data to render lists, draw charts, and otherwise
+aggregate data.
+
+The `Backbone.Collection` class is used to model and act on multiple models at
+the same time. Let's take our note example and see how we could build up a list
+of notes that we'd like to draw later:
+
+```javascript
+var NoteCollection = Backbone.Collection.extend({
+});
+
+var noteList = new NoteCollection([
+  new Note({title: 'Note1', content: 'Content1'}),
+  new Note({title: 'Note2', content: 'Content2'})
+]);
+```
+
+This will store the list of notes. After creating our collection, we can add new
+notes using the `add` method, like so:
+
+```javascript
+noteList.add(new Note({title: 'Note3', content: 'Content3'}));
+```
+
+Since we only have a single type in our list, let's set this constraint in the
+definition:
+
+```javascript
+var NoteCollection = Backbone.Collection.extend({
+  model: Note
+});
+
+var noteList = new NoteCollection([
+  {title: 'Note1', content: 'Content1'},
+  {title: 'Note2', content: 'Content2'}
+]);
+
+noteList.add({title: 'Note3', content: 'Content3'});
+```
+
+Now Backbone will convert our raw JavaScript objects into `Note` objects, both
+on creation and when adding new objects. It will also enforce this:
+
+```javascript
+var NotANote = Backbone.Model.extend();
+
+noteList.add(new NotANote({something: 'Some Value'}));
+// ERROR - This is not a Note object
+```
+
+
+### Synchronizing data
+
+Collections are used to pull lists of data from our server and build an
+abstraction we can operate on. Assuming that our note-taking app has a server
+endpoint `/note/` that returns a JSON list in the form:
+
+```javascript
+[
+  {
+    "content": "Note Content",
+    "title": "Note title",
+    "reminder": null,
+    "timestamp": "2015-09-01 12:01:00",
+    "id": 1
+  },
+  {
+    "content": "Another note with some content",
+    "title": "Note title2",
+    "reminder": "2015-09-02 09:00:00",
+    "timestamp": "2015-09-01 12:51:00",
+    "id": 2
+  },
+  {
+    "content": "Yet another note",
+    "title": "Note title 3",
+    "reminder": null,
+    "timestamp": "2015-02-01 12:01:00",
+    "id": 3
+  }
+]
+```
+
+Now let's define our collection that references the URL endpoint:
+
+```javascript
+var NoteCollection = Backbone.Collection.extend({
+  url: '/note/',
+  model: Note
+});
+
+var noteList = new NoteCollection();
+noteList.fetch();
+```
+
+Like in `Model`, we use the `fetch` method to pull our data from the server and
+insert it into our collection.
+
+
+[backbone-model]: http://backbonejs.org/#Model
+[backbone-collection]: http://backbonejs.org/#Collection
+[backbone-event]: http://backbonejs.org/#Events-catalog
+[views]: ../views/README.md
+[view-event]: ../views/events.md
