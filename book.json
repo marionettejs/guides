@@ -2,6 +2,7 @@
   "title": "Marionette Guides",
   "description": "Learn how to build web apps using Marionette",
   "gitbook": "2.0.1",
+  "language": "en",
   "links": {
     "sidebar": {
       "Support": "https://gitter.im/marionettejs/backbone.marionette"
