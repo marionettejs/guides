@@ -142,8 +142,141 @@ table.add({name: 'Joanne', language: 'English', handle: 'jdaudier'});
 ```
 
 
+## Attaching Multiple Behaviors
+
+Attaching multiple behaviors is easy, just add another key in the `behaviors`
+hash:
+
+```javascript
+var ModalBehavior = Marionette.Behavior.extend({
+  // ... Handle rendering and tearing down a modal
+});
+
+var FormBehavior = Marionette.Behavior.extend({
+  // ... Handle form and save logic
+});
+
+var ModalForm = Marionette.LayoutView.extend({
+  behaviors: {
+    modal: {
+      behaviorClass: ModalBehavior
+    },
+    form: {
+      behaviorClass: FormBehavior
+    }
+  }
+});
+```
+
+Now we have a form that can be a modal! Another common case is to create a
+basic View that does what you need, then add a modal version of it like so:
+
+```javascript
+var NoteView = Marionette.LayoutView.extend({
+  template: require('./template/note.html')
+});
+
+var ModalNoteView = NoteView.extend({
+  // May be needed depending on the modal implementation
+  template: require('./template/modalnote.html'),
+  behaviors: {
+    modal: {
+      behaviorClass: ModalBehavior
+    }
+  }
+});
+```
+
+Now we're able to both render a Note and display it in a Modal with minimal
+added effort.
+
+
 ## Adding options to our Behavior
 
+Behaviors can also be customized for each view, taking options to slightly alter
+their behavior. This could be as simple as defining custom elements to look for,
+or even specific functions to call.
+
+To add options, we just set them next to our `behaviorClass` and we can get them
+using the `getOption` method on `Behavior`:
+
+```javascript
+var HighlightBehavior = Marionette.Behavior.extend({
+  ui: {
+    item: '.item-handle'
+  },
+
+  events: {
+    'click @ui.item': 'highlight'
+  },
+
+  // This could be called via an event
+  highlight: function() {
+    this.ui.item.addClass(
+      this.getOption('highlightClass'));
+  }
+});
+
+
+var HighlightRedView = Marionette.LayoutView.extend({
+  behaviors: {
+    highlight: {
+      behaviorClass: HighlightBehavior,
+      highlightClass: 'highlight-red'
+    }
+  }
+});
+```
+
+
+### Setting default options
+
+In general, we'll have a default value in mind for each option so let's set it
+using the `defaults` hash:
+
+```javascript
+var HighlightBehavior = Marionette.Behavior.extend({
+  defaults: {
+    highlightClass: 'highlight-green'
+  },
+
+  ui: {
+    item: '.item-handle'
+  },
+
+  events: {
+    'click @ui.item': 'highlight'
+  },
+
+  // This could be called via an event
+  highlight: function() {
+    this.ui.item.addClass(
+      this.getOption('highlightClass'));
+  }
+});
+
+
+var HighlightGreenView = Marionette.LayoutView.extend({
+  behaviors: {
+    highlight: {
+      behaviorClass: HighlightBehavior
+    }
+  }
+});
+
+
+var HighlightRedView = Marionette.LayoutView.extend({
+  behaviors: {
+    highlight: {
+      behaviorClass: HighlightBehavior,
+      highlightClass: 'highlight-red'
+    }
+  }
+});
+```
+
+Our `HighlightGreenView` doesn't need to set a `highlightClass` as the
+`HighlightBehavior` has `highlight-green` as a default value.
 
 
 [views]: ../views/README.md
