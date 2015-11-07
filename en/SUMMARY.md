@@ -22,6 +22,7 @@
 * [Implementing Routing](approuter/README.md)
   * [Attaching Controllers](approuter/attach_controllers.md)
 * [Sharing common view Behavior](behaviors/README.md)
+  * [Example Behaviors](behaviors/common_behaviors.md)
 * [Handling Data Latency](data_latency/README.md)
 * [Dealing with Complex Persisted Data](persisted_data/README.md)
 * [Nesting Your Views](layoutview/README.md)
