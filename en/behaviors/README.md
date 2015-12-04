@@ -279,4 +279,42 @@ Our `HighlightGreenView` doesn't need to set a `highlightClass` as the
 `HighlightBehavior` has `highlight-green` as a default value.
 
 
+## Listening to Model/Collection events
+
+Like views, Behaviors are able to listen to the `modelEvents` and
+`collectionEvents` hashes with their own custom behavior. We could use this to,
+for example, highlight a saved form
+
+```javascript
+var FormSaveBehavior = Marionette.Behavior.extend({
+  ui: {
+    highlight: '.highlight-field'
+  },
+
+  modelEvents: {
+    error: 'highlightError',
+    sync: 'highlightSaved'
+  },
+
+  collectionEvents: {
+    sync: 'clearHighlights'
+  },
+
+  clearHighlights: function() {
+    this.ui.highlight.removeClass('highlight-green highlight-red')
+  },
+
+  highlightError: function() {
+    this.ui.highlight.addClass('highlight-red');
+    this.ui.highlight.removeClass('highlight-green');
+  },
+
+  highlightSaved: function() {
+    this.ui.highlight.addClass('highlight-green');
+    this.ui.highlight.removeClass('highlight-red');
+  }
+})
+```
+
+
 [views]: ../views/README.md
