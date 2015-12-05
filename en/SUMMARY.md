@@ -15,7 +15,7 @@
   * [Structuring your App](views/layouts.md)
   * [Events and Triggers](views/events.md)
     * [Built-in Triggers](views/triggers.md)
-* [Templates](views/README.md)
+* [Templates](templates/README.md)
 * [Creating an Application](application/README.md)
   * [Integrating with Routing](application/routing.md)
   * [Multiple Application Starters](application/multiple_apps.md)
