@@ -118,7 +118,7 @@ var Marionette = require('backbone.marionette');
 
 var ToDo = Marionette.LayoutView.extend({
   tagName: 'li',
-  template: './templates/todoitem.html'
+  template: require('./templates/todoitem.html')
 });
 
 
@@ -153,7 +153,7 @@ removed the `template` attribute as `CollectionView` has no template of its own.
 In `templates/todoitem.html` we simply have:
 
 ```html
-<%- item.text %> &mdash; <%- item.assignee %>
+<%- text %> &mdash; <%- assignee %>
 ```
 
 
