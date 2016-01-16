@@ -4,9 +4,164 @@ As with all JavaScript libraries, there are a number of ways to get started with
 a Marionette application. In this section we'll cover the most common ways.
 
 
+## Using NPM and Webpack
+
+[Webpack][webpack] is a build tool that makes it easy to pull your dependencies
+together into a single bundle to be delivered to your browser's `<script>` tag.
+It works particularly well with Marionette and jQuery.
+
+To install Marionette using NPM and Webpack:
+
+  1. Install NPM following the advice from the [NPM blog][install-npm]
+  2. Create a directory for your JavaScript application
+  3. Inside that directory, run `npm init`, giving your application names
+  4. Install [Webpack][webpack]: `npm install --save webpack`
+  5. Install Marionette's dependencies:
+    `npm install --save backbone backbone.marionette underscore backbone.wreqr
+    backbone.babysitter underscore-template-loader`
+
+Whether you bundle jQuery really depends on whether you have external
+dependencies on jQuery. For example, if you're using Bootstrap's JavaScript as a
+`<script>` tag, you probably don't want to bundle jQuery and you'll want to
+depend on the global `window.$` variable.
+
+
+### Bundled jQuery
+
+Bundling jQuery lets you require `jquery` inside your application and keeps all
+your dependencies under Webpack's management. To bundle jQuery, simply
+`npm install --save jquery`. We'll move on to configuring our Webpack
+application.
+
+
+#### Configuring Webpack
+
+Configuring Webpack with jQuery bundled in your application is relatively
+straightforward. Let's assume that your application lives in a directory called
+`app` and the main entry point (or driver) is called `driver.js`. In addition,
+you want to send the resulting file to a directory called `static/js`.
+
+Create a file called `webpack.config.js` with the following:
+
+```javascript
+var webpack = require('webpack');
+
+module.exports = {
+  entry: './app/driver.js',
+  module: {
+    loaders: [
+      {
+        test: /\.html$/,
+        loader: 'underscore-template-loader'
+      }
+    ]
+  },
+  output: {
+    path: __dirname + '/static/js',
+    filename: 'bundle.js'
+  },
+  plugins: [
+    new webpack.ProvidePlugin({
+      _: 'underscore'
+    })
+  ],
+  resolve: {
+    modulesDirectories: [__dirname + '/node_modules'],
+    root: __dirname + '/app'
+  },
+  resolveLoader: {
+    root: __dirname + '/node_modules'
+  }
+};
+```
+
+
+### Global jQuery
+
+If you're referencing the `window.$` variable created by including jQuery in a
+`<script>` tag, download [jQuery][jquery] and place it in your static JS folder.
+
+
+#### Configuring Webpack
+
+Configuring Webpack for a global jQuery variable is only slightly more
+complicated than a bundled jQuery. Let's assume that your application lives in a
+directory called `app` and the main entry point (or driver) is called
+`driver.js`. In addition, you want to send the resulting file to a directory
+called `static/js`.
+
+Create a file called `webpack.config.js` with the following:
+
+
+```javascript
+var webpack = require('webpack');
+
+module.exports = {
+  entry: './app/driver.js',
+
+  externals: {
+    'jquery': '$'
+  },
+
+  module: {
+    loaders: [
+      {
+        test: /\.html$/,
+        loader: 'underscore-template-loader'
+      }
+    ]
+  },
+  output: {
+    path: __dirname + '/static/js',
+    filename: 'bundle.js'
+  },
+  plugins: [
+    new webpack.ProvidePlugin({
+      _: 'underscore'
+    })
+  ],
+  resolve: {
+    modulesDirectories: [__dirname + '/node_modules'],
+    root: __dirname + '/app'
+  },
+  resolveLoader: {
+    root: __dirname + '/node_modules'
+  }
+};
+```
+
+Note the new `externals` key that tells Webpack to inject the global `window.$`
+variable whenever Backbone or Marionette reference `require('jquery')` in their
+imports.
+
+
+### Building your application
+
+With Webpack configured, you can build your application simply by doing:
+`node_modules/.bin/webpack`.
+
+
+### Serving your Application
+
+We'll now create our `index.html` file to reference our new application and
+start it.
+
+```html
+<script src="static/js/bundle.js"></script>
+```
+
+If you're using any other imported JavaScript (e.g. jQuery), make sure they're
+loaded before our `bundle.js` file so anything that depends on them will be able
+to see the globals they expose.
+
+
 ## Using NPM and Browserify
 
-To install Marionette using NPM, we must install a few dependencies and then
+[Browserify][browserify] is a build tool that makes it easy to bundle NPM
+modules into your application, so you can `require` them as you would import
+dependencies in any other language.
+
+To setup Browserify and Marionette, we must install a few dependencies and then
 install Marionette itself.
 
   1. Install NPM following the advice from the [NPM blog][install-npm]
@@ -34,14 +189,22 @@ Backbone.Marionette = require('backbone.marionette');
 When building our applications, we'll commonly use a `driver.js` file that will
 start by importing this `setup.js` file: `require('setup.js')`.
 
+
+### Building your Application
+
 When we want to compile our application, we'll use Browserify:
 
-```browserify driver.js -t node-underscorify -o static_folder/app.js```
+```bash
+browserify driver.js -t node-underscorify -o static_folder/app.js
+```
 
 where `static_folder` is the directory to the static directory that your web
 server provides.
 
-Now, in the `index.html` file, or base template (if you're using Django, Rails,
+
+### Serving your Application
+
+In the `index.html` file, or base template (if you're using Django, Rails,
 etc.) place the following at the bottom of your `body` tag:
 
 ```html
@@ -54,3 +217,5 @@ It's important to load jQuery first, so your `setup.js` file sees it.
 
 [install-npm]: http://blog.npmjs.org/post/85484771375/how-to-install-npm
 [jquery]: https://jquery.org/
+[browserify]: http://browserify.org/
+[webpack]: https://webpack.github.io/
