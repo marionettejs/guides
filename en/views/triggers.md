@@ -262,8 +262,9 @@ only fire if the view's collection is _not_ empty. In other words, if the view
 attached to `emptyView` is displayed, this trigger won't be fired.
 
 
-#### Example
+### `render:empty` and `before:render:empty`
 
+Fired after the `emptyView` has been rendered.
 
 #### On Views
 
@@ -358,6 +359,26 @@ regionManager.get('layout').show(new MyLayout({collection: todoList}));
 
 ## List of Views and their Triggers
 
+The Marionette view lifecycle involves firing a number of triggers at each stage
+of its creation. The exact lifecycle depends on how the view is displayed and
+what type of view it is.
+
+![Marionette Lifecycle](marionette-region-show-lifecyle.png)
+
+This diagram displays the full lifecycle. Our `before:add:child` and `add:child`
+only get called on `CollectionView` and `CompositeView` before the view
+lifecycle of each child is executed.
+
+Our `before:show` and `show` triggers get fired whenever the view is shown as
+part of a usual lifecycle - from `region.show(view)`,
+`view.showChildView(view)`, or when a new child is added to a `CollectionView`
+with `view.collection.add(model)`.
+
+### Views and their Triggers
+
+Included below is a reference to all the in-built view triggers and the views
+that can trigger them:
+
 &nbsp;      |  `View`  | `ItemView` | `LayoutView` | `CollectionView` | `CompositeView`
 ------------|:--------:|:----------:|:------------:|:----------------:|:--------------:
 `add:child` |          |            |              |     &#10003;     |    &#10003;
@@ -370,7 +391,6 @@ regionManager.get('layout').show(new MyLayout({collection: todoList}));
 `reorder`   |          |            |              |     &#10003;     |    &#10003;
 `remove:child` |       |            |              |     &#10003;     |    &#10003;
 `show`      |  &#10003;|  &#10003;  |    &#10003;  |     &#10003;     |    &#10003;
-
 
 [bootstrap-modal]: http://getbootstrap.com/javascript/#modals-methods
 [events]: ./events.md

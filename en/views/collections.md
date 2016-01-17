@@ -90,7 +90,7 @@ Now, whenever an item gets added, no matter how, an alert box will be displayed
 for each one.
 
 
-## Lists inside Templates
+## Rendering Tables
 
 You'll notice the `CollectionView` doesn't define its own template. This makes
 it unsuitable for more complex listed layouts such as tables. To solve this
