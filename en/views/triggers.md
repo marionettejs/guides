@@ -372,5 +372,22 @@ regionManager.get('layout').show(new MyLayout({collection: todoList}));
 `show`      |  &#10003;|  &#10003;  |    &#10003;  |     &#10003;     |    &#10003;
 
 
+## Standard Trigger Lifecycles
+
+The Marionette view lifecycle involves firing a number of triggers at each stage
+of its creation. The exact lifecycle depends on how the view is displayed and
+what type of view it is. We'll cover the most common view types and
+
+
+### Show a View from a Region
+
+This code is run when we show a view using regions:
+
+```javascript
+this.showChildView('myRegion', childView);
+```
+
+![Marionette Lifecycle](images/marionette-region-show-lifecycle.png)
+
 [bootstrap-modal]: http://getbootstrap.com/javascript/#modals-methods
 [events]: ./events.md

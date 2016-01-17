@@ -6,7 +6,7 @@ This section will outline some of the more common ones.
 
 ## Data Manipulation
 
-### forms
+### Forms
 
 The form behavior is one of the most common behaviors for interactive
 applications. The form here will be a simple behavior that you can build on and
