@@ -1,7 +1,4 @@
 {
   "name": "book",
-  "version": "0.0.0",
-  "dependencies": {
-    "hapi-auth-google": "^1.0.7"
-  }
+  "version": "0.0.0"
 }
