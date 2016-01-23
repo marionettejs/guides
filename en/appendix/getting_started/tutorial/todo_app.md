@@ -77,10 +77,10 @@ var Layout = Marionette.LayoutView.extend({
     this.showChildView('list', listView);
   },
 
-  onChildviewAddTodoItem: function() {
+  onChildviewAddTodoItem: function(child) {
     this.model.set({
-      assignee: this.ui.assignee.val(),
-      text: this.ui.text.val()
+      assignee: child.ui.assignee.val(),
+      text: child.ui.text.val()
     }, {validate: true});
 
     var items = this.model.pick('assignee', 'text');
@@ -93,7 +93,9 @@ var Layout = Marionette.LayoutView.extend({
       text: ''
     });
   }
-})
+});
+
+module.exports = Layout;
 ```
 
 `form.js`:

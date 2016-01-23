@@ -86,7 +86,7 @@ var TodoList = Marionette.CompositeView.extend({
 });
 
 
-module.exports = TodoView;
+module.exports = TodoList;
 ```
 
 
@@ -253,10 +253,10 @@ var Layout = Marionette.LayoutView.extend({
     this.showChildView('list', listView);
   },
 
-  onChildviewAddTodoItem: function() {
+  onChildviewAddTodoItem: function(child) {
     this.model.set({
-      assignee: this.ui.assignee.val(),
-      text: this.ui.text.val()
+      assignee: child.ui.assignee.val(),
+      text: child.ui.text.val()
     }, {validate: true});
 
     var items = this.model.pick('assignee', 'text');
@@ -278,9 +278,12 @@ the form view itself, while logic that links the form to the list is kept in
 this `LayoutView`. We also have an `onShow` handler that renders the views into
 the `jQuery` selectors referenced by the `regions` hash. Finally, a `LayoutView`
 can see events occurring on its children by prepending its event handler with
-`Childview` as in `onChildviewAddTodoItem`. The individual views don't directly
-interact with each other, instead interacting with the model and letting the
-view event handlers recognize when they need to do something.
+`Childview` as in `onChildviewAddTodoItem`. The `Childview` triggers always send
+a copy of their view as the first argument, allowing us to see the `ui` object.
+
+The individual views don't directly interact with each other, instead
+interacting with the model and letting the view event handlers recognize when
+they need to do something.
 
 Finally, this layout solves the issue identified before. Now only the form
 itself will be re-rendered when data changes. The list is able to manage the
