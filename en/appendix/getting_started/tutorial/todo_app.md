@@ -93,7 +93,9 @@ var Layout = Marionette.LayoutView.extend({
       text: ''
     });
   }
-})
+});
+
+module.exports = Layout;
 ```
 
 `form.js`:
