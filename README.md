@@ -14,7 +14,15 @@ and HTML5 features.
 
 ## What is Marionette?
 
+Marionette is a flexible web app framework that helps you build your apps
+quickly and integrated into any of your web service backends easily.
+
+
 ## Where Do I Start?
+
+Firstly, check out our [installation instructions][installing] and our
+[getting started guide][tutorial]. If you have a particular topic that you're
+interested in, our contents page should guide you in the right direction.
 
 ## Contribute
 
