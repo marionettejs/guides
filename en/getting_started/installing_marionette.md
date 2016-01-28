@@ -173,7 +173,8 @@ install Marionette itself.
   7. Install Marionette: `npm install --save backbone.marionette`
   8. Install the Underscore plugin for browserify:
     `npm install --save node-underscorify`
-  9. Download [jQuery][jquery] and place it in a static folder
+  9. Install jquery `npm install --save jquery`
+  10. Download [jQuery][jquery] and place it in a static folder
 
 Now we have our basics in place, we can setup a standard `setup.js` file that
 will ensure Marionette can be accessed:
@@ -187,7 +188,7 @@ Backbone.Marionette = require('backbone.marionette');
 ```
 
 When building our applications, we'll commonly use a `driver.js` file that will
-start by importing this `setup.js` file: `require('setup.js')`.
+start by importing this `setup.js` file: `require('./setup.js')`.
 
 
 ### Building your Application
