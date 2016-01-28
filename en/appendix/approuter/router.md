@@ -88,7 +88,9 @@ var Controller = Marionette.Object.extend({
         our different layouts.
     */
     this.options.regionManager = new Marionette.RegionManager({
-      main: '#blog-hook'
+      regions: {
+        main: '#blog-hook'
+      }
     });
     var initialData = this.getOption('initialData');
 
