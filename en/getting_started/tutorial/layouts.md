@@ -33,7 +33,7 @@ var ToDoModel = require('./models/todo');
 
 var ToDo = Marionette.LayoutView.extend({
   tagName: 'li',
-  template: './templates/todoitem.html'
+  template: require('./templates/todoitem.html')
 });
 
 
@@ -60,11 +60,6 @@ var TodoList = Marionette.CompositeView.extend({
 
   modelEvents: {
     change: 'render'
-  },
-
-  initialize: function() {
-    this.collection = new Backbone.Collection(this.getOption('initialData'));
-    this.model = new ToDoModel();
   },
 
   onAddTodoItem: function() {
@@ -116,7 +111,10 @@ var initialData = {
 
 var App = new Marionette.Application({
   onStart: function(options) {
-    var todo = new TodoView(options);
+    var todo = new TodoView({
+      collection: new Backbone.Collection(this.getOption('initialData')),
+      model: new ToDoModel()
+    });
     todo.render();
     todo.triggerMethod('show');
   }
@@ -237,14 +235,6 @@ var Layout = Marionette.LayoutView.extend({
     add: 'itemAdded'
   },
 
-  initialize: function() {
-    this.collection = new Backbone.Collection([
-      {assignee: 'Scott', text: 'Write a book about Marionette'},
-      {assignee: 'Andrew', text: 'Do some coding'}
-    ]);
-    this.model = new ToDoModel();
-  },
-
   onShow: function() {
     var formView = new FormView({model: this.model});
     var listView = new ListView({collection: this.collection});
@@ -269,7 +259,7 @@ var Layout = Marionette.LayoutView.extend({
       text: ''
     });
   }
-})
+});
 ```
 
 

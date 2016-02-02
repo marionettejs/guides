@@ -18,7 +18,7 @@ var Marionette = require('backbone.marionette');
 
 var ToDo = Marionette.LayoutView.extend({
   tagName: 'li',
-  template: './templates/todoitem.html'
+  template: require('./templates/todoitem.html')
 });
 
 
@@ -27,17 +27,16 @@ var TodoList = Marionette.CompositeView.extend({
   template: require('./templates/todolist.html'),
 
   childView: ToDo,
-  childViewContainer: 'ul',
-
-  initialize: function() {
-    this.collection = new Backbone.Collection([
-      {assignee: 'Scott', text: 'Write a book about Marionette'},
-      {assignee: 'Andrew', text: 'Do some coding'}
-    ]);
-  }
+  childViewContainer: 'ul'
 });
 
-var todo = new TodoList();
+var todo = new TodoList({
+  collection: new Backbone.Collection([
+    {assignee: 'Scott', text: 'Write a book about Marionette'},
+    {assignee: 'Andrew', text: 'Do some coding'}
+  ])
+});
+
 todo.render();
 ```
 
@@ -79,7 +78,7 @@ var Marionette = require('backbone.marionette');
 
 var ToDo = Marionette.LayoutView.extend({
   tagName: 'li',
-  template: './templates/todoitem.html'
+  template: require('./templates/todoitem.html')
 });
 
 
@@ -104,13 +103,6 @@ var TodoList = Marionette.CompositeView.extend({
     add: 'itemAdded'
   },
 
-  initialize: function() {
-    this.collection = new Backbone.Collection([
-      {assignee: 'Scott', text: 'Write a book about Marionette'},
-      {assignee: 'Andrew', text: 'Do some coding'}
-    ]);
-  },
-
   onAddTodoItem: function() {  // 4
     this.collection.add({
       assignee: this.ui.assignee.val(),  // 5
@@ -124,7 +116,12 @@ var TodoList = Marionette.CompositeView.extend({
   }
 });
 
-var todo = new TodoList();
+var todo = new TodoList({
+  collection: new Backbone.Collection([
+    {assignee: 'Scott', text: 'Write a book about Marionette'},
+    {assignee: 'Andrew', text: 'Do some coding'}
+  ])
+});
 todo.render();
 ```
 
@@ -216,7 +213,7 @@ var ToDoModel = require('./models/todo');
 
 var ToDo = Marionette.LayoutView.extend({
   tagName: 'li',
-  template: './templates/todoitem.html'
+  template: require('./templates/todoitem.html')
 });
 
 
@@ -241,14 +238,6 @@ var TodoList = Marionette.CompositeView.extend({
     add: 'itemAdded'
   },
 
-  initialize: function() {
-    this.collection = new Backbone.Collection([
-      {assignee: 'Scott', text: 'Write a book about Marionette'},
-      {assignee: 'Andrew', text: 'Do some coding'}
-    ]);
-    this.model = new ToDoModel();
-  },
-
   onAddTodoItem: function() {
     this.model.set({
       assignee: this.ui.assignee.val(),
@@ -270,7 +259,14 @@ var TodoList = Marionette.CompositeView.extend({
   }
 });
 
-var todo = new TodoList();
+var todo = new TodoList({
+  collection: new Backbone.Collection([
+    {assignee: 'Scott', text: 'Write a book about Marionette'},
+    {assignee: 'Andrew', text: 'Do some coding'}
+  ]),
+  model: new ToDoModel()
+});
+
 todo.render();
 ```
 
@@ -316,7 +312,7 @@ var ToDoModel = require('./models/todo');
 
 var ToDo = Marionette.LayoutView.extend({
   tagName: 'li',
-  template: './templates/todoitem.html'
+  template: require('./templates/todoitem.html')
 });
 
 
@@ -345,14 +341,6 @@ var TodoList = Marionette.CompositeView.extend({
     change: 'render'
   },
 
-  initialize: function() {
-    this.collection = new Backbone.Collection([
-      {assignee: 'Scott', text: 'Write a book about Marionette'},
-      {assignee: 'Andrew', text: 'Do some coding'}
-    ]);
-    this.model = new ToDoModel();
-  },
-
   onAddTodoItem: function() {
     this.model.set({
       assignee: this.ui.assignee.val(),
@@ -371,7 +359,14 @@ var TodoList = Marionette.CompositeView.extend({
   }
 });
 
-var todo = new TodoList();
+var todo = new TodoList({
+  collection: new Backbone.Collection([
+    {assignee: 'Scott', text: 'Write a book about Marionette'},
+    {assignee: 'Andrew', text: 'Do some coding'}
+  ]),
+  model: new ToDoModel()
+});
+
 todo.render();
 ```
 
