@@ -21,9 +21,13 @@ var initialData = {
   ]
 };
 
+
 var App = new Marionette.Application({
   onStart: function(options) {
-    var todo = new TodoView(options);
+    var todo = new TodoView({
+      collection: new Backbone.Collection(options.initialData.items),
+      model: new ToDoModel()
+    });
     todo.render();
     todo.triggerMethod('show');
   }
@@ -59,14 +63,6 @@ var Layout = Marionette.LayoutView.extend({
 
   collectionEvents: {
     add: 'itemAdded'
-  },
-
-  initialize: function() {
-    this.collection = new Backbone.Collection([
-      {assignee: 'Scott', text: 'Write a book about Marionette'},
-      {assignee: 'Andrew', text: 'Do some coding'}
-    ]);
-    this.model = new ToDoModel();
   },
 
   onShow: function() {
