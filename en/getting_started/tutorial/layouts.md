@@ -109,7 +109,7 @@ var initialData = {
   ]
 };
 
-var App = new Marionette.Application({
+var app = new Marionette.Application({
   onStart: function(options) {
     var todo = new TodoView({
       collection: new Backbone.Collection(this.getOption('initialData')),
@@ -120,7 +120,7 @@ var App = new Marionette.Application({
   }
 });
 
-App.start({initialData: initialData});
+app.start({initialData: initialData});
 ```
 
 
