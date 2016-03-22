@@ -120,8 +120,7 @@ var App = new Marionette.Application({
   }
 });
 
-var app = new App();
-app.start({initialData: initialData});
+App.start({initialData: initialData});
 ```
 
 
