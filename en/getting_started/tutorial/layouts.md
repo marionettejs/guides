@@ -107,7 +107,7 @@ var initialData = [
   {assignee: 'Andrew', text: 'Do some coding'}
 ];
 
-var App = new Marionette.Application({
+var app = new Marionette.Application({
   onStart: function(options) {
     var todo = new TodoView({
       collection: new Backbone.Collection(options.initialData),
@@ -118,7 +118,6 @@ var App = new Marionette.Application({
   }
 });
 
-var app = new App();
 app.start({initialData: initialData});
 ```
 
