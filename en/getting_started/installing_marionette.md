@@ -165,10 +165,15 @@ To install Marionette using NPM and Brunch:
 
   1. Install NPM following the advice from the [NPM blog][install-npm]
   2. Install Brunch: `sudo npm install -g brunch`
-  3. Run `brunch new your_directory_name -s marionettejs`. Brunch will create simple skeleton 
-and install all needed dependancies.
+  3. Run `brunch new our_directory_name -s marionettejs`. Brunch will create simple skeleton 
+and install all needed dependencies.
 
-Simple skeleton is placed in `your_directory_name`.
+Simple skeleton is placed in `our_directory_name`.
+If we want to change our configuration file, we should look at `brunch-config.js` 
+inside our folder. 
+
+[Here](https://github.com/brunch/brunch/blob/master/docs/config.md) 
+more information about how to configurate `brunch`.
 
 ### Building your Application
 
