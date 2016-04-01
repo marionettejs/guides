@@ -155,6 +155,41 @@ loaded before our `bundle.js` file so anything that depends on them will be able
 to see the globals they expose.
 
 
+## Using NPM and Brunch
+
+[Brunch][brunch] is a builder. Not a generic task runner, but a specialized tool 
+focusing on the production of a small number of deployment-ready files 
+from a large number of heterogenous development files or trees.
+
+To install Marionette using NPM and Brunch:
+
+  1. Install NPM following the advice from the [NPM blog][install-npm]
+  2. Install Brunch: `sudo npm install -g brunch`
+  3. Run `brunch new our_directory_name -s marionettejs`. Brunch will create simple skeleton 
+and install all needed dependencies.
+
+Simple skeleton is placed in `our_directory_name`.
+If we want to change our configuration file, we should look at `brunch-config.js` 
+inside our folder. 
+
+[Here](https://github.com/brunch/brunch/blob/master/docs/config.md) 
+more information about how to configurate `brunch`.
+
+### Building your Application
+
+When we want to compile our application, we'll run inside our folder:
+
+`brunch build --production` — builds minified project for production.
+
+### Serving your Application
+
+When we want to run our application, we'll run inside our folder:
+
+`brunch watch --server`. Brunch will watch the project with continuous rebuild.
+
+Try opening `http://localhost:3333/` we'll see our application working. 
+
+
 ## Using NPM and Browserify
 
 [Browserify][browserify] is a build tool that makes it easy to bundle NPM
@@ -215,8 +250,8 @@ etc.) place the following at the bottom of your `body` tag:
 
 It's important to load jQuery first, so your `setup.js` file sees it.
 
-
 [install-npm]: http://blog.npmjs.org/post/85484771375/how-to-install-npm
 [jquery]: https://jquery.org/
 [browserify]: http://browserify.org/
 [webpack]: https://webpack.github.io/
+[brunch]: http://brunch.io/
