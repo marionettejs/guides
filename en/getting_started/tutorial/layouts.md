@@ -28,18 +28,18 @@ little:
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 
-var ToDoModel = require('./models/todo');
+var ToDoModel = require('../models/todo');
 
 
 var ToDo = Marionette.LayoutView.extend({
   tagName: 'li',
-  template: require('./templates/todoitem.html')
+  template: require('../templates/todoitem.html')
 });
 
 
 var TodoList = Marionette.CompositeView.extend({
   el: '#app-hook',
-  template: require('./templates/todolist.html'),
+  template: require('../templates/todolist.html'),
 
   childView: ToDo,
   childViewContainer: 'ul',
@@ -257,6 +257,8 @@ var Layout = Marionette.LayoutView.extend({
     });
   }
 });
+
+module.exports = Layout;
 ```
 
 
