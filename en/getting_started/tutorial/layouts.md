@@ -144,7 +144,7 @@ var Marionette = require('backbone.marionette');
 
 var ToDo = Marionette.LayoutView.extend({
   tagName: 'li',
-  template: '../templates/todoitem.html'
+  template: require('../templates/todoitem.html')
 });
 
 
@@ -161,7 +161,6 @@ module.exports = TodoList;
 ```js
 // views/form.js
 var Marionette = require('backbone.marionette');
-
 
 var FormView = Marionette.LayoutView.extend({
   tagName: 'form',
@@ -210,9 +209,7 @@ for us.
 Our `views/layout.js` file now handles the management of the two separate views:
 
 ```js
-var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
-var ToDoModel = require('../models/todo');
 
 var FormView = require('./form');
 var ListView = require('./list');
