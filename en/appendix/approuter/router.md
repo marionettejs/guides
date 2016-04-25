@@ -69,7 +69,7 @@ var App = new Marionette.Application({
   }
 });
 
-app.start({initialData: initialData});
+App.start({initialData: initialData});
 ```
 
 
