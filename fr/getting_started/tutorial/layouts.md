@@ -114,7 +114,7 @@ var initialData = {
   ]
 };
 
-var App = new Marionette.Application({
+var app = new Marionette.Application({
   onStart: function(options) {
     var todo = new TodoView(options);
     todo.render();
@@ -122,7 +122,6 @@ var App = new Marionette.Application({
   }
 });
 
-var app = new App();
 app.start({initialData: initialData});
 ```
 

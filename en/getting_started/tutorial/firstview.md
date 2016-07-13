@@ -93,7 +93,7 @@ Next we'll modify our `templates/layout.html` file to take advantage of this:
 ```js
 <ul>
   <% _.each(items, function(item) { %>
-    <li><%- item.text %> &mdash; <%- item.assignee %>
+    <li><%- item.text %> &mdash; <%- item.assignee %></li>
   <% }) %>
 </ul>
 ```
