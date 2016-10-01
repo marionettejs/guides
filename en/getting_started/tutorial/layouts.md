@@ -101,6 +101,8 @@ like:
 ```js
 var Marionette = require('backbone.marionette');
 var TodoView = require('./views/layout');
+var ToDoModel = require('./models/todo');
+
 
 var initialData = [
   {assignee: 'Scott', text: 'Write a book about Marionette'},
