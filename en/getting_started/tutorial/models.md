@@ -242,10 +242,12 @@ var TodoList = Marionette.CompositeView.extend({
     this.model.set({
       assignee: this.ui.assignee.val(),
       text: this.ui.text.val()
-    }, {validate: true});
+    });
 
-    var items = this.model.pick('assignee', 'text');
-    this.collection.add(items);
+    if (this.model.isValid()) {
+      var items = this.model.pick('assignee', 'text');
+      this.collection.add(items);
+    }
   },
 
   itemAdded: function() {
@@ -345,10 +347,12 @@ var TodoList = Marionette.CompositeView.extend({
     this.model.set({
       assignee: this.ui.assignee.val(),
       text: this.ui.text.val()
-    }, {validate: true});
+    });
 
-    var items = this.model.pick('assignee', 'text');
-    this.collection.add(items);
+    if (this.model.isValid()) {
+      var items = this.model.pick('assignee', 'text');
+      this.collection.add(items);
+    }
   },
 
   itemAdded: function() {
