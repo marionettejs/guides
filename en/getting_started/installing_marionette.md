@@ -17,8 +17,8 @@ To install Marionette using NPM and Webpack:
   3. Inside that directory, run `npm init`, giving your application names
   4. Install [Webpack][webpack]: `npm install --save webpack`
   5. Install Marionette's dependencies:
-    `npm install --save backbone backbone.marionette underscore backbone.wreqr
-    backbone.babysitter underscore-template-loader`
+    `npm install --save backbone@1.3.3 backbone.marionette@2.4.7 underscore@1.8.3
+    backbone.wreqr backbone.babysitter underscore-template-loader`
 
 Whether you bundle jQuery really depends on whether you have external
 dependencies on jQuery. For example, if you're using Bootstrap's JavaScript as a
@@ -157,22 +157,22 @@ to see the globals they expose.
 
 ## Using NPM and Brunch
 
-[Brunch][brunch] is a builder. Not a generic task runner, but a specialized tool 
-focusing on the production of a small number of deployment-ready files 
+[Brunch][brunch] is a builder. Not a generic task runner, but a specialized tool
+focusing on the production of a small number of deployment-ready files
 from a large number of heterogenous development files or trees.
 
 To install Marionette using NPM and Brunch:
 
   1. Install NPM following the advice from the [NPM blog][install-npm]
   2. Install Brunch: `sudo npm install -g brunch`
-  3. Run `brunch new our_directory_name -s marionettejs`. Brunch will create simple skeleton 
+  3. Run `brunch new our_directory_name -s marionettejs`. Brunch will create simple skeleton
 and install all needed dependencies.
 
 Simple skeleton is placed in `our_directory_name`.
-If we want to change our configuration file, we should look at `brunch-config.js` 
-inside our folder. 
+If we want to change our configuration file, we should look at `brunch-config.js`
+inside our folder.
 
-[Here](https://github.com/brunch/brunch/blob/master/docs/config.md) 
+[Here](https://github.com/brunch/brunch/blob/master/docs/config.md)
 more information about how to configurate `brunch`.
 
 ### Building your Application
@@ -187,7 +187,7 @@ When we want to run our application, we'll run inside our folder:
 
 `brunch watch --server`. Brunch will watch the project with continuous rebuild.
 
-Try opening `http://localhost:3333/` we'll see our application working. 
+Try opening `http://localhost:3333/` we'll see our application working.
 
 
 ## Using NPM and Browserify
@@ -203,9 +203,9 @@ install Marionette itself.
   2. Create a directory for your JavaScript application
   3. Inside that directory, run `npm init`, giving your application names
   4. Install Browserify: `sudo npm install -g browserify`
-  5. Install Underscore: `npm install --save underscore@1.7.0`
-  6. Install Backbone: `npm install --save backbone`
-  7. Install Marionette: `npm install --save backbone.marionette`
+  5. Install Underscore: `npm install --save underscore@1.8.3`
+  6. Install Backbone: `npm install --save backbone@1.3.3`
+  7. Install Marionette: `npm install --save backbone.marionette@2.4.7`
   8. Install the Underscore plugin for browserify:
     `npm install --save node-underscorify`
   9. Install jquery `npm install --save jquery`
