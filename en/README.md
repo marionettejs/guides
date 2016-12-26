@@ -25,6 +25,15 @@ rendering your data and handling user and server input on your application and
 data.
 
 
+### Marionette Version
+
+This Guide covers version 2.4 of Marionette. Since this guide was published,
+Marionette 3 has been released with some major improvements. We would recommend
+you use the newer versions where possible. This guide will continue to cover
+version 2 and we will link to a separate guide covering version 3 when it
+becomes available.
+
+
 ## Where Do I Start?
 
 Firstly, check out our [installation instructions][installing] and our
