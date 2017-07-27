@@ -66,11 +66,10 @@ module.exports = {
     })
   ],
   resolve: {
-    modulesDirectories: [__dirname + '/node_modules'],
-    root: __dirname + '/app'
+    modules: [__dirname + '/node_modules', __dirname + '/app']
   },
   resolveLoader: {
-    root: __dirname + '/node_modules'
+    modules: [__dirname + '/node_modules']
   }
 };
 ```
@@ -121,11 +120,10 @@ module.exports = {
     })
   ],
   resolve: {
-    modulesDirectories: [__dirname + '/node_modules'],
-    root: __dirname + '/app'
+    modules: [__dirname + '/node_modules', __dirname + '/app']
   },
   resolveLoader: {
-    root: __dirname + '/node_modules'
+    modules: [__dirname + '/node_modules']
   }
 };
 ```
