@@ -5,7 +5,7 @@ comparison with your own application. This code is for demonstration purposes -
 it is not necessarily the best way to build such applications and it certainly
 isn't the only way.
 
-[ES6 version of the code][#todo-app-code---es6-version]
+[ES6 version of the code](#todo-app-code---es6-version)
 
 
 ## Driver file
