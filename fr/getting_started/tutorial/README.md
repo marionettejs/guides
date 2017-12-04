@@ -1,17 +1,17 @@
 # Faire dancer votre application !
 
-Bienvevue dans le guide de démarrage pour `Backbone Marionette`.
+Bienvenue dans le guide de démarrage pour `Backbone Marionette`.
 
 
 ## Que vais-je découvrir dans ce tutoriel ?
 
-Après avoir lu ce tutoriel, vous serez capable de débuter une application `Marionette` complète. Nous allons construire une simple liste de taches, dans laquelle il est possible d'ajouter et de retirer des éléments.
+Après avoir lu ce tutoriel, vous serez capable de débuter une application `Marionette` complète. Nous allons construire une simple liste de tâches, dans laquelle il est possible d'ajouter et de retirer des éléments.
 
 Ce tutoriel vous apprendra comment
 - associer des données à vos `Views`,
 - architecturer votre application,
 - conduire les utilisateurs via la barre d'_URL_
-- et de synchroniser des données en provenance du serveur.
+- synchroniser des données en provenance d'un serveur.
 
 
 ## A savoir
@@ -29,7 +29,7 @@ Avant de commencer, nous allons définir une structure simple afin de tout ordon
      |-- views/
 ```
 
-A chaque fois que nous ferons référence à un fichier, nous réfèrerons à son nom et à son répértoire parent.
+A chaque fois que nous ferons référence à un fichier, nous réfèrerons à son nom et à son répertoire parent.
 
 Notre `index.html` :
 

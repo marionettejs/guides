@@ -126,7 +126,7 @@ todo.render();
 ```
 
 
-Nous avons ajouter pas mal de code ici, alors tachons de découper cela :
+Nous avons ajouté pas mal de code ici, alors tachons de découper cela :
 
   1. Nous avons ajouter un tableau associatif `ui` à notre vue. Nous pouvons ajouter cela à toute vue afin de créer des sélecteurs jQuery mis en cache de nos éléments  à soumettre au _template_ de la vue.
   2. A l'intérieur de notre tableau associatif `triggers`, nous pouvons obtenir une référence de des clés du _hash_ `ui` , lorsqu'un événement jQuery que nous écoutons se produit, le `trigger` le capture.
@@ -135,18 +135,18 @@ Nous avons ajouter pas mal de code ici, alors tachons de découper cela :
   5. Nous pouvons aussi référencé le _hash_ `ui` au sein de la vue et l'utiliser comme n'importe quel objet jQuery.
   6. La méthode référencée dans `collectionEvents` est notifiée lorsque l'événement est déclenché.
 
-Maintenant, chaque fois que nous cliquons sur le bouton  "Add Item", une nouvelle tache sera ajoutée à notre liste et le formulaire sera ré-initialisé. Nous avions eu aussi l'opportunité de vous montrer aussi les événements provenant des collections aussi. Pöpur une liste complète des événements, veuillez vous rendre à la [documentation Backbone][eventlist].
+Maintenant, chaque fois que nous cliquons sur le bouton  "Add Item", une nouvelle tâche sera ajoutée à notre liste et le formulaire sera ré-initialisé. Nous avions eu aussi l'opportunité de vous montrer aussi les événements provenant des collections aussi. Pour une liste complète des événements, veuillez vous rendre sur la [documentation Backbone][eventlist].
 
 
 ## Valider la saisie
 
 Un travail ne devrait pas pouvoir être ajouté à la liste, s'il contient ni texte, ni personne associée. Vous noterez que nous n'avons pas ajouter une telle contrainte, mais nous devrions le faire. Il y a une série de façon de le faire :
-- Nous pouvons utiliser l'attribut `ui` et valider son contenu via jQuery
-- ou nous pouvons utiliser la validation des `Model` de _Backbone_.
+- nous pouvons utiliser l'attribut `ui` et valider son contenu via jQuery
+- nous pouvons utiliser la validation des `Model` de _Backbone_.
 
-A part apparaître plus sympa, l'avantage d'effectuer la validation de données depuis le modèle, est que nous pourrons le partager cette référence entre plusieurs vues, sans avior à ré-écrire la logique de validation à chaque fois.
+A part apparaître plus sympa, l'avantage d'effectuer la validation de données depuis le modèle, est que nous pourrons partager cette référence entre plusieurs vues, sans avoir à ré-écrire la logique de validation à chaque fois.
 
-Nou sallons créer un enouveau fichier  nommé `models/todo.js` contenant :
+Nous allons créer un nouveau fichier nommé `models/todo.js` contenant :
 
 ```js
 var Backbone = require('backbone');
@@ -180,8 +180,8 @@ var ToDo = Backbone.Model.extend({
 module.exports = ToDo;
 ```
 
-Lorsqu'aucune erreur de ne survient, notre méthode  `validate` ne doit rien retourner (`undefined`).
-Lorsqu'une erreur aarive, nous poucvions retourner un objet la décrivant. La vue _Marionette_ verra ainsi l'erreur de validation et nous permettra de la manipuler.
+Lorsqu'aucune erreur ne survient, notre méthode  `validate` ne doit rien retourner (`undefined`).
+Lorsqu'une erreur arrive, nous pouvons retourner un objet la décrivant. La vue _Marionette_ verra ainsi l'erreur de validation et nous permettra de la manipuler.
 
 De retour dans notre fichier `driver.js`  nous pouvons faire :
 
@@ -278,7 +278,7 @@ Tout d'abord, ouvrons notre _template_ `todolist.html` :
 </form>
 ```
 
-En ajoutant les champs du modèle à notre formulaire, nous seront aptes à restituer les données directement deouis notre modèle. Cela signifie aussi que, lorsque les champs sont vides, ils ne contiendront pas de valeur.
+En ajoutant les champs du modèle à notre formulaire, nous serons aptes à restituer les données directement depuis notre modèle. Cela signifie aussi que, lorsque les champs sont vides, ils ne contiendront pas de valeur.
 Nous avons juste besoin de relier cela à notre vue :
 
 ```js
@@ -351,8 +351,8 @@ var todo = new TodoList();
 todo.render();
 ```
 
-Avec ces changements, le formulaire va se reinitialisé tout seul dès que l'utilisateur acrtive le bouton  "Add Item".
-Toutefois, il y a une dernière chose à noter - la méthode `render` redesssine la totalité de la liste aussi. Vous pouvez probablement imaginer que cela va vite devenir un goulet d'étranglement, plus la liste grossira. Idéalement, nous souhaitons juste redessiné le formulaire et la liste séparement. Nous verrons cela au prochain chapitre.
+Avec ces changements, le formulaire va se reinitialisé tout seul dès que l'utilisateur active le bouton  "Add Item".
+Toutefois, il y a une dernière chose à noter - la méthode `render` redesssine la totalité de la liste aussi. Vous pouvez probablement imaginer que cela va vite devenir un goulot d'étranglement, plus la liste grossira. Idéalement, nous souhaitons juste redessiner le formulaire et la liste séparement. Nous verrons cela au prochain chapitre.
 
 
 [eventlist]: http://backbonejs.org/#Events-catalog "Backbone Events"

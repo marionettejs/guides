@@ -20,7 +20,7 @@ var hello = new HelloWorld();  // 5
 hello.render();  // 6
 ```
 
-Ensuite, nous créons un fichier dans le dossier `templates` called `layout.html` et le définissons ainsi :
+Ensuite, nous créons un fichier dans le dossier `templates` appelé `layout.html` et le définissons ainsi :
 
 ```html
 <p>Hello, world!</p>
@@ -83,7 +83,7 @@ todo.render();
 
 Le point central de cette modification tient l'insertion d'un objet en une instance de `Backbone.Model`. Les modèles _Backbone_ s'intègrent aisément avec les _templates_, conférant un accès simple à la source de données. Nous verrons dans plusieurs chapitres à quel point les modèles peuvent être puissants en ce qui concerne nos vues.
 
-Modifions notre fichier `templates/layout.html` pour prendre avantage de ce cahngement :
+Modifions notre fichier `templates/layout.html` pour prendre avantage de ce changement :
 
 ```js
 <ul>
@@ -93,7 +93,7 @@ Modifions notre fichier `templates/layout.html` pour prendre avantage de ce cahn
 </ul>
 ```
 
-Nous utilisons [le moteur de templateUnderscore][underscore] pour restituer notre liste d'éléments. Vous devriez obtenir une liste de deux éléments.
+Nous utilisons [le moteur de template Underscore][underscore] pour restituer notre liste d'éléments. Vous devriez obtenir une liste de deux éléments.
 Nous avons désormais une liste rendue dans la page, mais cela semble un peu maladroit. Qu'arrive t-il si nous souhaitons ajouter ou supprimer des entrées à cette liste ?
 
 
